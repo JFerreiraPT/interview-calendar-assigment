@@ -25,6 +25,7 @@ builder.Services.AddAutoMapper(typeof(MappingProfile));
 //Add Services and Helpers
 //Add singleton to Injection
 builder.Services.AddSingleton<IInterviewerService, InterviewerService>();
+builder.Services.AddSingleton<ICandidateService, CandidateService>();
 builder.Services.AddSingleton<PasswordHasher>();
 
 

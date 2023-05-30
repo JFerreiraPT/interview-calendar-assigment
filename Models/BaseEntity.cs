@@ -13,7 +13,7 @@ namespace Interview_Calendar.Models
 
         public DateTime CreatedAt => Id.CreationTime;
 
-        public bool isActive { get; set; }
+		public bool isActive { get; set; } = true;
     }
 }
 
