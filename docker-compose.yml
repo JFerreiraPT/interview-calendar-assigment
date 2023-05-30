@@ -1,0 +1,17 @@
+version: '3.4'
+
+services:
+  interviewCalendarDb:
+    image: mongo:latest
+    environment:
+        MONGO_INITDB_ROOT_USERNAME: root
+        MONGO_INITDB_ROOT_PASSWORD: password
+    ports:
+        - 27087:27017
+  interview-calendar:
+    image: ${DOCKER_REGISTRY-}interviewcalendar
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+
+#Run: docker-compose -f docker-compose.yml -f docker-compose.override.yml up -d
