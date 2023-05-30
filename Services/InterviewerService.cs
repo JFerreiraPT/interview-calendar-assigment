@@ -9,13 +9,18 @@ namespace Interview_Calendar.Services
         public Task<Interviewer> PreCreateUserAsync(UserDTO dto)
         {
             //Transform DTO in entity with map helper + validations if needed
+
+
             throw new NotImplementedException();
         }
 
-        public Task<Interviewer> CreateUserAsync(Interviewer entity)
+        public async Task<InterviewerResponseDTO> CreateUserAsync(UserDTO dto)
         {
             //add to db context
-            throw new NotImplementedException();
+            var user = await PreCreateUserAsync(dto);
+
+            return await PostCreateUserAsync(user);
+
         }
 
         public Task<InterviewerResponseDTO> PostCreateUserAsync(Interviewer entity)
