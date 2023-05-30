@@ -4,7 +4,7 @@ using Interview_Calendar.Models;
 
 namespace Interview_Calendar.Services
 {
-	public interface IInterviewerService : IUserService<Interviewer, UserDTO, InterviewerResponseDTO>
+	public interface IInterviewerService: IUserService<Interviewer, UserCreateDTO, InterviewerResponseDTO>
 	{
 	}
 }
