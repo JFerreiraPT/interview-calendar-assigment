@@ -15,6 +15,8 @@ namespace Interview_Calendar.Services
         private readonly IMapper _mapper;
         private readonly PasswordHasher _passwordHasher;
 
+        private readonly AddUserService<Candidate, UserCreateDTO, CandidateResponseDTO> _addUserService;
+
         public CandidateService(IOptions<UserDbConfiguration> userConfiguration, IMapper mapper, PasswordHasher hasher)
         {
             _mapper = mapper;
@@ -22,51 +24,31 @@ namespace Interview_Calendar.Services
             var mongoClient = new MongoClient(userConfiguration.Value.ConnectionString);
             var userDatabase = mongoClient.GetDatabase(userConfiguration.Value.DatabaseName);
             _userCollection = userDatabase.GetCollection<User>(userConfiguration.Value.UserCollectionName);
+
+            _addUserService = new AddUserService<Candidate, UserCreateDTO, CandidateResponseDTO>(_userCollection, _mapper, _passwordHasher);
         }
 
 
         public Candidate PreCreateUserAsync(UserCreateDTO dto)
         {
-            //Transform DTO in entity with map helper + validations if needed
-
-            //Validate if there is any user with this email
-            var userExists = _userCollection.Find(x => x.Email == dto.Email).Any();
-
-            if (userExists)
-            {
-                throw new Exception();
-            }
-
-            //hash password
-            dto.Password = _passwordHasher.Hash(dto.Password);
-
-            var candidate = _mapper.Map<Candidate>(dto);
-
-
-            return candidate;
+            
+            return _addUserService.PreCreateUserAsync(dto);
+            
         }
         public async Task<CandidateResponseDTO> CreateUserAsync(UserCreateDTO dto)
         {
             //add to db context
             var user = PreCreateUserAsync(dto);
 
+            var entity = await _addUserService.CreateUserAsync(user);
 
-            try
-            {
-                await _userCollection.InsertOneAsync(user);
+            return PostCreateUserAsync(entity);            
 
-                return PostCreateUserAsync(user);
-            }
-            catch (Exception ex)
-            {
-                //Todo:Throw exception
-                throw new Exception();
-            }
         }
 
         public CandidateResponseDTO PostCreateUserAsync(Candidate entity)
         {
-            return _mapper.Map<CandidateResponseDTO>(entity);
+            return _addUserService.PostCreateUserAsync(entity);
         }
 
 
