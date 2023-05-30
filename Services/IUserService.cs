@@ -10,9 +10,9 @@ namespace Interview_Calendar.Services
         where DI : UserDTO
         where DO : UserDTO
 	{
-        Task<T> PreCreateUserAsync(DI dto);
+        T PreCreateUserAsync(DI dto);
         Task<DO> CreateUserAsync(DI dto);
-        Task<DO> PostCreateUserAsync(T entity);
+        DO PostCreateUserAsync(T entity);
     }
 }
 
