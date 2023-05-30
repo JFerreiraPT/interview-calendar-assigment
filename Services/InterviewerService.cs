@@ -25,7 +25,7 @@ namespace Interview_Calendar.Services
 
         public Task<InterviewerResponseDTO> PostCreateUserAsync(Interviewer entity)
         {
-            //mapp to response dto and handle post dependencies if any
+            //map to response dto and handle post dependencies if any
             throw new NotImplementedException();
         }
 
