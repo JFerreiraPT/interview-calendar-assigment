@@ -1,5 +1,35 @@
 ﻿<Properties StartupConfiguration="{08433BA2-2B34-48D5-AC36-A8C9F94FEA6E}|Default">
   <MultiItemStartupConfigurations />
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore />
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
   <MonoDevelop.Ide.ItemProperties.Interview-Calendar PreferredExecutionTarget="/Applications/Google Chrome.app" />
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="Program.cs">
+    <Files>
+      <File FileName="Dockerfile" Line="20" Column="13" />
+      <File FileName="docker-compose.yml" Line="17" Column="38" />
+      <File FileName="docker-compose.override.yml" Line="13" Column="65" />
+      <File FileName="appsettings.json" Line="15" Column="1" />
+      <File FileName="Program.cs" Line="29" Column="27" />
+      <File FileName=".gitignore" Line="398" Column="10" />
+      <File FileName="Data/UserDbConfiguration.cs" Line="4" Column="34" />
+    </Files>
+    <Pads>
+      <Pad Id="ProjectPad">
+        <State name="__root__">
+          <Node name="Interview-Calendar" expanded="True">
+            <Node name="Interview-Calendar" expanded="True" selected="True">
+              <Node name="Controllers" expanded="True" />
+              <Node name="Data" expanded="True" />
+              <Node name="Properties" expanded="True" />
+              <Node name="docker-compose.yml" expanded="True" />
+            </Node>
+          </Node>
+        </State>
+      </Pad>
+    </Pads>
+  </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.ItemProperties.docker-compose PreferredExecutionTarget="MonoDevelop.Default" />
 </Properties>
