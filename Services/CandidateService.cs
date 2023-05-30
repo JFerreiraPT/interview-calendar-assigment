@@ -37,11 +37,11 @@ namespace Interview_Calendar.Services
                 throw new Exception();
             }
 
-
             //hash password
             dto.Password = _passwordHasher.Hash(dto.Password);
 
             var candidate = _mapper.Map<Candidate>(dto);
+
 
             return candidate;
         }
