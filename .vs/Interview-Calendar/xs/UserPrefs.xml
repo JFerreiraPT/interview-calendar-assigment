@@ -1,3 +1,5 @@
-﻿<Properties StartupConfiguration="{5F1BC353-A170-436C-BAB6-63D8E9E5D66C}|https">
+﻿<Properties StartupConfiguration="{08433BA2-2B34-48D5-AC36-A8C9F94FEA6E}|Default">
   <MultiItemStartupConfigurations />
+  <MonoDevelop.Ide.ItemProperties.Interview-Calendar PreferredExecutionTarget="/Applications/Google Chrome.app" />
+  <MonoDevelop.Ide.ItemProperties.docker-compose PreferredExecutionTarget="MonoDevelop.Default" />
 </Properties>
