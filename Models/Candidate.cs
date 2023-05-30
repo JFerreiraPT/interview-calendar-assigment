@@ -1,7 +1,7 @@
 ﻿using System;
 namespace Interview_Calendar.Models
 {
-	public class Candidate
+	public class Candidate : User
 	{
         public DateTime Interview = default!;
     }
