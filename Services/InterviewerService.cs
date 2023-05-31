@@ -7,6 +7,9 @@ using Interview_Calendar.Models;
 using Microsoft.Extensions.Options;
 using MongoDB.Driver;
 using System.Linq;
+using MongoDB.Bson;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.DataProtection.KeyManagement;
 
 namespace Interview_Calendar.Services
 {
@@ -59,30 +62,35 @@ namespace Interview_Calendar.Services
 
 
 
-        public void AddAvailability(string interviewerId, DateOnly date, int[] timeSlots)
+        public async Task<bool> AddAvailability(string interviewerId, DateOnly date, int[] timeSlots)
         {
-            var filter = Builders<Interviewer>.Filter.Eq("_id", interviewerId);
-            var update = Builders<Interviewer>.Update.AddToSetEach(x => x.Availability[date], timeSlots);
 
-            _userCollection.UpdateOne(filter, update);
+
+            //If date dont exist yet create new sorted list, otherwise update
+            var filter = Builders<Interviewer>.Filter.And(
+                Builders<Interviewer>.Filter.Eq<ObjectId>("_id", ObjectId.Parse(interviewerId)),
+                Builders<Interviewer>.Filter.Eq("_t", typeof(Interviewer).Name)
+            );
+
+            var update = Builders<Interviewer>.Update.Set($"Availability.{date}", new SortedSet<int>(timeSlots));
+
+            var result = await _userCollection.UpdateOneAsync(filter, update);
+            return result.ModifiedCount > 0;
         }
 
-        public void RemoveAvailability(string interviewerId, DateOnly date, int[] timeSlots)
+        public async Task<bool> RemoveDayAvailability(string interviewerId, DateOnly date)
         {
-            var filter = Builders<Interviewer>.Filter.Eq("_id", interviewerId);
-            var update = Builders<Interviewer>.Update.PullAll(x => x.Availability[date], timeSlots);
+            var filter = Builders<Interviewer>.Filter.And(
+                Builders<Interviewer>.Filter.Eq<ObjectId>("_id", ObjectId.Parse(interviewerId)),
+                Builders<Interviewer>.Filter.Eq<string>("_t", typeof(Interviewer).Name)
+            );
 
-            _userCollection.UpdateOne(filter, update);
+            var update = Builders<Interviewer>.Update.Unset($"Availability.{date}");
+
+            var result = await _userCollection.UpdateOneAsync(filter, update);
+            return result.ModifiedCount > 0;
+
         }
-
-        public void UpdateAvailability(string interviewerId, DateOnly date, int[] timeSlots)
-        {
-            var filter = Builders<Interviewer>.Filter.Eq("_id", interviewerId);
-            var update = Builders<Interviewer>.Update.Set(x => x.Availability[date], new SortedSet<int>(timeSlots));
-
-            _userCollection.UpdateOne(filter, update);
-        }
-
 
     }
 }

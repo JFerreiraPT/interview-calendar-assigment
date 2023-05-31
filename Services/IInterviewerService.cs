@@ -7,9 +7,8 @@ namespace Interview_Calendar.Services
 	public interface IInterviewerService: IUserService<Interviewer, UserCreateDTO, InterviewerResponseDTO>
 	{
 
-        void AddAvailability(string interviewerId, DateOnly date, int[] timeSlots);
-        void RemoveAvailability(string interviewerId, DateOnly date, int[] timeSlots);
-        void UpdateAvailability(string interviewerId, DateOnly date, int[] timeSlots);
+        Task<bool> AddAvailability(string interviewerId, DateOnly date, int[] timeSlots);
+        Task<bool> RemoveDayAvailability(string interviewerId, DateOnly date);
     }
 }
 

@@ -1,6 +1,9 @@
 using Interview_Calendar.Data;
 using Interview_Calendar.Helpers;
+using Interview_Calendar.Models;
 using Interview_Calendar.Services;
+using MongoDB.Bson.Serialization;
+using MongoDB.Bson.Serialization.Options;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -37,6 +40,19 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+//We need this to serialize Availability property in order to be able to seacrh for it
+BsonClassMap.RegisterClassMap<Interviewer>(cm =>
+{
+    cm.AutoMap();
+    var memberMap = cm.GetMemberMap(x => x.Availability);
+    var serializer = memberMap.GetSerializer();
+    if (serializer is IDictionaryRepresentationConfigurable dictionaryRepresentationSerializer)
+        serializer = dictionaryRepresentationSerializer.WithDictionaryRepresentation(DictionaryRepresentation.ArrayOfDocuments);
+    memberMap.SetSerializer(serializer);
+});
+
+
 
 app.UseHttpsRedirection();
 
