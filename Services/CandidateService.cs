@@ -11,7 +11,7 @@ namespace Interview_Calendar.Services
 {
 	public class CandidateService : ICandidateService
 	{
-        private readonly IMongoCollection<User> _userCollection;
+        private readonly IMongoCollection<Candidate> _userCollection;
         private readonly IMapper _mapper;
         private readonly PasswordHasher _passwordHasher;
 
@@ -23,9 +23,13 @@ namespace Interview_Calendar.Services
             _passwordHasher = hasher;
             var mongoClient = new MongoClient(userConfiguration.Value.ConnectionString);
             var userDatabase = mongoClient.GetDatabase(userConfiguration.Value.DatabaseName);
-            _userCollection = userDatabase.GetCollection<User>(userConfiguration.Value.UserCollectionName);
+            _userCollection = userDatabase.GetCollection<Candidate>(userConfiguration.Value.UserCollectionName);
 
-            _addUserService = new AddUserService<Candidate, UserCreateDTO, CandidateResponseDTO>(_userCollection, _mapper, _passwordHasher);
+
+            _addUserService = new AddUserService<Candidate, UserCreateDTO, CandidateResponseDTO>(
+                userDatabase.GetCollection<User>(userConfiguration.Value.UserCollectionName),
+                _mapper,
+                _passwordHasher);
         }
 
 

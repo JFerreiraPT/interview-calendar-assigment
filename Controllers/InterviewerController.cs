@@ -23,6 +23,38 @@ namespace Interview_Calendar.Controllers
             var user = await _interviewerService.CreateUserAsync(userCreate);
             return CreatedAtAction(nameof(Create), new { nameof = user.Name }, user);
         }
+
+
+
+        [HttpPost("{interviewerId}/availability")]
+        public async Task<IActionResult> AddAvailability(string interviewerId, [FromBody] AvailabilityRequestDTO request)
+        {
+            try
+            {
+                await _interviewerService.AddAvailability(interviewerId, request.Date, request.TimeSlots);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        [HttpDelete("{interviewerId}/availability")]
+        public async Task<IActionResult> RemoveAvailability(string interviewerId, [FromBody] AvailabilityRequestDTO request)
+        {
+            try
+            {
+                await _interviewerService.RemoveDayAvailability(interviewerId, request.Date);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+       
     }
 }
 

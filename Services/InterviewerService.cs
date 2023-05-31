@@ -6,12 +6,16 @@ using Interview_Calendar.Helpers;
 using Interview_Calendar.Models;
 using Microsoft.Extensions.Options;
 using MongoDB.Driver;
+using System.Linq;
+using MongoDB.Bson;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.DataProtection.KeyManagement;
 
 namespace Interview_Calendar.Services
 {
 	public class InterviewerService : IInterviewerService
 	{
-        private readonly IMongoCollection<User> _userCollection;
+        private readonly IMongoCollection<Interviewer> _userCollection;
         private readonly IMapper _mapper;
         private readonly PasswordHasher _passwordHasher;
 
@@ -23,9 +27,12 @@ namespace Interview_Calendar.Services
             _passwordHasher = hasher;
             var mongoClient = new MongoClient(userConfiguration.Value.ConnectionString);
             var userDatabase = mongoClient.GetDatabase(userConfiguration.Value.DatabaseName);
-            _userCollection = userDatabase.GetCollection<User>(userConfiguration.Value.UserCollectionName);
+            _userCollection = userDatabase.GetCollection<Interviewer>(userConfiguration.Value.UserCollectionName);
 
-            _addUserService = new AddUserService<Interviewer, UserCreateDTO, InterviewerResponseDTO>(_userCollection, _mapper, _passwordHasher);
+            _addUserService = new AddUserService<Interviewer, UserCreateDTO, InterviewerResponseDTO>(
+                userDatabase.GetCollection<User>(userConfiguration.Value.UserCollectionName),
+                _mapper,
+                _passwordHasher);
         }
 
         public Interviewer PreCreateUserAsync(UserCreateDTO dto)
@@ -53,6 +60,37 @@ namespace Interview_Calendar.Services
             return _addUserService.PostCreateUserAsync(entity);
         }
 
+
+
+        public async Task<bool> AddAvailability(string interviewerId, DateOnly date, int[] timeSlots)
+        {
+
+
+            //If date dont exist yet create new sorted list, otherwise update
+            var filter = Builders<Interviewer>.Filter.And(
+                Builders<Interviewer>.Filter.Eq<ObjectId>("_id", ObjectId.Parse(interviewerId)),
+                Builders<Interviewer>.Filter.Eq("_t", typeof(Interviewer).Name)
+            );
+
+            var update = Builders<Interviewer>.Update.Set($"Availability.{date}", new SortedSet<int>(timeSlots));
+
+            var result = await _userCollection.UpdateOneAsync(filter, update);
+            return result.ModifiedCount > 0;
+        }
+
+        public async Task<bool> RemoveDayAvailability(string interviewerId, DateOnly date)
+        {
+            var filter = Builders<Interviewer>.Filter.And(
+                Builders<Interviewer>.Filter.Eq<ObjectId>("_id", ObjectId.Parse(interviewerId)),
+                Builders<Interviewer>.Filter.Eq<string>("_t", typeof(Interviewer).Name)
+            );
+
+            var update = Builders<Interviewer>.Update.Unset($"Availability.{date}");
+
+            var result = await _userCollection.UpdateOneAsync(filter, update);
+            return result.ModifiedCount > 0;
+
+        }
 
     }
 }
