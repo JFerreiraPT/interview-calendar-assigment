@@ -71,7 +71,8 @@ namespace Interview_Calendar.Services
             //If date dont exist yet create new sorted list, otherwise update
             var filter = Builders<Interviewer>.Filter.And(
                 Builders<Interviewer>.Filter.Eq<ObjectId>("_id", ObjectId.Parse(interviewerId)),
-                Builders<Interviewer>.Filter.Eq("_t", typeof(Interviewer).Name)
+                Builders<Interviewer>.Filter.Eq("_t", typeof(Interviewer).Name),
+                Builders<Interviewer>.Filter.Eq("isActive", true)
             );
 
             var update = Builders<Interviewer>.Update.Set($"Availability.{date}", new SortedSet<int>(timeSlots));
@@ -84,7 +85,8 @@ namespace Interview_Calendar.Services
         {
             var filter = Builders<Interviewer>.Filter.And(
                 Builders<Interviewer>.Filter.Eq<ObjectId>("_id", ObjectId.Parse(interviewerId)),
-                Builders<Interviewer>.Filter.Eq<string>("_t", typeof(Interviewer).Name)
+                Builders<Interviewer>.Filter.Eq<string>("_t", typeof(Interviewer).Name),
+                Builders<Interviewer>.Filter.Eq("isActive", true)
             );
 
             var update = Builders<Interviewer>.Update.Unset($"Availability.{date}");
@@ -99,7 +101,8 @@ namespace Interview_Calendar.Services
         {
             var filter = Builders<Interviewer>.Filter.And(
                 Builders<Interviewer>.Filter.Eq<ObjectId>("_id", ObjectId.Parse(interviewerId)),
-                Builders<Interviewer>.Filter.Eq("_t", typeof(Interviewer).Name)
+                Builders<Interviewer>.Filter.Eq("_t", typeof(Interviewer).Name),
+                Builders<Interviewer>.Filter.Eq("isActive", true)
             );
 
             var interviewer = await _userCollection.FindAsync(filter);
@@ -118,6 +121,7 @@ namespace Interview_Calendar.Services
             var filter = Builders<Interviewer>.Filter.And(
                 Builders<Interviewer>.Filter.Eq("_id", new ObjectId(interviewerId)),
                 Builders<Interviewer>.Filter.Eq("_t", typeof(Interviewer).Name),
+                Builders<Interviewer>.Filter.Eq("isActive", true),
                 Builders<Interviewer>.Filter.Eq($"Availability.{dateString}", new BsonDocument("$in", new BsonArray { interviewHour }))
             );
 
@@ -137,7 +141,8 @@ namespace Interview_Calendar.Services
 
             var filter = Builders<Interviewer>.Filter.And(
                 Builders<Interviewer>.Filter.Eq<ObjectId>("_id", ObjectId.Parse(interviewerId)),
-                Builders<Interviewer>.Filter.Eq("_t", typeof(Interviewer).Name)
+                Builders<Interviewer>.Filter.Eq("_t", typeof(Interviewer).Name),
+                Builders<Interviewer>.Filter.Eq("isActive", true)
             );
 
             var interviewer = _userCollection.Find(filter).FirstOrDefault();

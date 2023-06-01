@@ -22,6 +22,14 @@ namespace Interview_Calendar.Controllers
             var user = await _candidateService.CreateUserAsync(userCreate);
             return CreatedAtAction(nameof(Create), new { nameof = user.Name }, user);
         }
+
+        [HttpPatch("/{id}/interviewer")]
+        public async Task<IActionResult> AssignInterviwer(string id, AddInterviewerDTO interviwer)
+        {
+            var user = await _candidateService.AssignInterviewer(id, interviwer);
+            return Ok();
+        }
+
     }
 }
 
