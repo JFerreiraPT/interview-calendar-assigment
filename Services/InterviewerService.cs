@@ -108,6 +108,26 @@ namespace Interview_Calendar.Services
             return _mapper.Map<InterviewerResponseDTO>(interviewer);
         }
 
+        private async Task<bool> IsInterviwerAvailable(string interviewerId, DateTime interviewTime)
+        {
+
+            string dateString = interviewTime.ToString("MM/dd/yyyy");
+            int interviewHour = interviewTime.Hour;
+
+            // Build the query to find the document with the specified date and the availability containing the interview hour
+            var filter = Builders<Interviewer>.Filter.And(
+                Builders<Interviewer>.Filter.Eq("_id", new ObjectId(interviewerId)),
+                Builders<Interviewer>.Filter.Eq("_t", typeof(Interviewer).Name),
+                Builders<Interviewer>.Filter.Eq($"Availability.{dateString}", new BsonDocument("$in", new BsonArray { interviewHour }))
+            );
+
+            var result = await _userCollection.Find(filter).AnyAsync();
+
+            return result;
+
+
+        }
+
         public Dictionary<string, SortedSet<int>> GetInterviewersWithSchedulesBetweenDates(string interviewerId, DateOnly startDate, DateOnly endDate)
         {
 
