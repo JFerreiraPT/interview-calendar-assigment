@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Interview_Calendar.DTOs
 {
-	public class UserDTO
+    public class UserDTO
 	{
         [Required]
         public string Name { get; set; } = default!;

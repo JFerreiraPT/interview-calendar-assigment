@@ -1,7 +1,9 @@
 ﻿using System;
 using Interview_Calendar.DTOs;
+using Interview_Calendar.Models;
 using Interview_Calendar.Services;
 using Microsoft.AspNetCore.Mvc;
+using MongoDB.Bson;
 
 namespace Interview_Calendar.Controllers
 {
@@ -54,7 +56,17 @@ namespace Interview_Calendar.Controllers
             }
         }
 
-       
+
+        [HttpGet("{interviewerId}/schedules")]
+        public IActionResult GetInterviewersWithSchedulesBetweenDates(string interviewerId, DateOnly startDate, DateOnly endDate)
+        {
+
+            Dictionary<string, SortedSet<int>> availability = _interviewerService.GetInterviewersWithSchedulesBetweenDates(interviewerId, startDate, endDate);
+
+            return Ok(availability);
+        }
+
+
     }
 }
 

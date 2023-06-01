@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "d243Li7tCOKxCKm/tbcffCKuuxGK40Q7NlGdENFDQxRomb4JOBX1aZCU7FTvZ7YHGoaopqFKgrF8HjtSoys71g==",
+  "dgSpecHash": "NieaxWb+FaWFLfrTLubdIImSRsoN8JWplC2epOp3N6JvnF4VYXz69hOtwwoMbdfmSrcRe+03A6lLH3Ap9bAuhA==",
   "success": true,
   "projectFilePath": "/Users/joaoferreira/Dev/training_projects/C#/interview-calendar-assignment/Interview-Calendar/Interview-Calendar.csproj",
   "expectedPackageFiles": [
@@ -9,6 +9,8 @@
     "/Users/joaoferreira/.nuget/packages/awssdk.core/3.7.100.14/awssdk.core.3.7.100.14.nupkg.sha512",
     "/Users/joaoferreira/.nuget/packages/awssdk.securitytoken/3.7.100.14/awssdk.securitytoken.3.7.100.14.nupkg.sha512",
     "/Users/joaoferreira/.nuget/packages/dnsclient/1.6.1/dnsclient.1.6.1.nupkg.sha512",
+    "/Users/joaoferreira/.nuget/packages/microsoft.aspnetcore.jsonpatch/7.0.5/microsoft.aspnetcore.jsonpatch.7.0.5.nupkg.sha512",
+    "/Users/joaoferreira/.nuget/packages/microsoft.aspnetcore.mvc.newtonsoftjson/7.0.5/microsoft.aspnetcore.mvc.newtonsoftjson.7.0.5.nupkg.sha512",
     "/Users/joaoferreira/.nuget/packages/microsoft.aspnetcore.openapi/7.0.5/microsoft.aspnetcore.openapi.7.0.5.nupkg.sha512",
     "/Users/joaoferreira/.nuget/packages/microsoft.csharp/4.7.0/microsoft.csharp.4.7.0.nupkg.sha512",
     "/Users/joaoferreira/.nuget/packages/microsoft.extensions.apidescription.server/6.0.5/microsoft.extensions.apidescription.server.6.0.5.nupkg.sha512",
@@ -23,6 +25,9 @@
     "/Users/joaoferreira/.nuget/packages/mongodb.driver/2.19.2/mongodb.driver.2.19.2.nupkg.sha512",
     "/Users/joaoferreira/.nuget/packages/mongodb.driver.core/2.19.2/mongodb.driver.core.2.19.2.nupkg.sha512",
     "/Users/joaoferreira/.nuget/packages/mongodb.libmongocrypt/1.7.0/mongodb.libmongocrypt.1.7.0.nupkg.sha512",
+    "/Users/joaoferreira/.nuget/packages/newtonsoft.json/13.0.3/newtonsoft.json.13.0.3.nupkg.sha512",
+    "/Users/joaoferreira/.nuget/packages/newtonsoft.json.bson/1.0.2/newtonsoft.json.bson.1.0.2.nupkg.sha512",
+    "/Users/joaoferreira/.nuget/packages/nodatime/3.1.9/nodatime.3.1.9.nupkg.sha512",
     "/Users/joaoferreira/.nuget/packages/sharpcompress/0.30.1/sharpcompress.0.30.1.nupkg.sha512",
     "/Users/joaoferreira/.nuget/packages/snappier/1.0.0/snappier.1.0.0.nupkg.sha512",
     "/Users/joaoferreira/.nuget/packages/swashbuckle.aspnetcore/6.4.0/swashbuckle.aspnetcore.6.4.0.nupkg.sha512",
