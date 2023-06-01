@@ -1,7 +1,9 @@
 ﻿using System;
 using Interview_Calendar.DTOs;
+using Interview_Calendar.Models;
 using Interview_Calendar.Services;
 using Microsoft.AspNetCore.Mvc;
+using MongoDB.Bson;
 
 namespace Interview_Calendar.Controllers
 {
@@ -54,7 +56,29 @@ namespace Interview_Calendar.Controllers
             }
         }
 
-       
+
+        [HttpGet("{interviewerId}/availability")]
+        public IActionResult GetInterviewersWithSchedulesBetweenDates(string interviewerId, DateOnly startDate, DateOnly endDate)
+        {
+            // If no startDate is provided, set it to one day less than endDate or today's date
+            if (startDate == DateOnly.MinValue)
+            {
+                startDate = endDate!= DateOnly.MinValue ?  endDate.AddDays(-1) : DateOnly.FromDateTime(DateTime.Today);
+            }
+
+            // If no endDate is provided, set it to one week after startDate or one week after today's date
+            if (endDate == DateOnly.MinValue)
+            {
+                endDate = startDate != DateOnly.MinValue ? startDate.AddDays(7) : DateOnly.FromDateTime(DateTime.Today.AddDays(7));
+            }
+
+
+            Dictionary<string, SortedSet<int>> availability = _interviewerService.GetInterviewersWithSchedulesBetweenDates(interviewerId, startDate, endDate);
+
+            return Ok(availability);
+        }
+
+
     }
 }
 

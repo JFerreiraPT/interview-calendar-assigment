@@ -8,8 +8,13 @@ using MongoDB.Bson.Serialization.Options;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+builder.Services.AddControllers().AddJsonOptions(options =>
+{
+    options.JsonSerializerOptions.PropertyNamingPolicy = null;
+    options.JsonSerializerOptions.DictionaryKeyPolicy = null;
+});
 
-builder.Services.AddControllers();
+builder.Services.AddControllers().AddNewtonsoftJson();
 
 //Configure Database Connection
 builder.Services.Configure<UserDbConfiguration>(
@@ -32,6 +37,9 @@ builder.Services.AddSingleton<ICandidateService, CandidateService>();
 builder.Services.AddSingleton<PasswordHasher>();
 
 
+
+
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -42,15 +50,15 @@ if (app.Environment.IsDevelopment())
 }
 
 //We need this to serialize Availability property in order to be able to seacrh for it
-BsonClassMap.RegisterClassMap<Interviewer>(cm =>
-{
-    cm.AutoMap();
-    var memberMap = cm.GetMemberMap(x => x.Availability);
-    var serializer = memberMap.GetSerializer();
-    if (serializer is IDictionaryRepresentationConfigurable dictionaryRepresentationSerializer)
-        serializer = dictionaryRepresentationSerializer.WithDictionaryRepresentation(DictionaryRepresentation.ArrayOfDocuments);
-    memberMap.SetSerializer(serializer);
-});
+//BsonClassMap.RegisterClassMap<Interviewer>(cm =>
+//{
+//    cm.AutoMap();
+//    var memberMap = cm.GetMemberMap(x => x.Availability);
+//    var serializer = memberMap.GetSerializer();
+//    if (serializer is IDictionaryRepresentationConfigurable dictionaryRepresentationSerializer)
+//        serializer = dictionaryRepresentationSerializer.WithDictionaryRepresentation(DictionaryRepresentation.ArrayOfDocuments);
+//    memberMap.SetSerializer(serializer);
+//});
 
 
 

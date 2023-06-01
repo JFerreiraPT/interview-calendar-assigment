@@ -1,11 +1,16 @@
 ﻿using System;
+using System.Text.Json.Serialization;
+using Newtonsoft.Json;
+
 namespace Interview_Calendar.DTOs
 {
-	public class InterviewerResponseDTO : UserDTO
+    public class InterviewerResponseDTO : UserDTO
 	{
-		public InterviewerResponseDTO()
-		{
-		}
-	}
+
+        [JsonPropertyName("availability")]
+        public Dictionary<string, SortedSet<int>> Availability;
+        [JsonPropertyName("interviews")]
+        public List<DateTime> Interviews;
+    }
 }
 

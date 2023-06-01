@@ -10,11 +10,13 @@ using System.Linq;
 using MongoDB.Bson;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.DataProtection.KeyManagement;
+using System.Globalization;
+using NodaTime.Text;
 
 namespace Interview_Calendar.Services
 {
-	public class InterviewerService : IInterviewerService
-	{
+    public class InterviewerService : IInterviewerService
+    {
         private readonly IMongoCollection<Interviewer> _userCollection;
         private readonly IMapper _mapper;
         private readonly PasswordHasher _passwordHasher;
@@ -91,6 +93,76 @@ namespace Interview_Calendar.Services
             return result.ModifiedCount > 0;
 
         }
+
+
+        public async Task<InterviewerResponseDTO> GetInterviewer(string interviewerId)
+        {
+            var filter = Builders<Interviewer>.Filter.And(
+                Builders<Interviewer>.Filter.Eq<ObjectId>("_id", ObjectId.Parse(interviewerId)),
+                Builders<Interviewer>.Filter.Eq("_t", typeof(Interviewer).Name)
+            );
+
+            var interviewer = await _userCollection.FindAsync(filter);
+
+
+            return _mapper.Map<InterviewerResponseDTO>(interviewer);
+        }
+
+        private async Task<bool> IsInterviwerAvailable(string interviewerId, DateTime interviewTime)
+        {
+
+            string dateString = interviewTime.ToString("MM/dd/yyyy");
+            int interviewHour = interviewTime.Hour;
+
+            // Build the query to find the document with the specified date and the availability containing the interview hour
+            var filter = Builders<Interviewer>.Filter.And(
+                Builders<Interviewer>.Filter.Eq("_id", new ObjectId(interviewerId)),
+                Builders<Interviewer>.Filter.Eq("_t", typeof(Interviewer).Name),
+                Builders<Interviewer>.Filter.Eq($"Availability.{dateString}", new BsonDocument("$in", new BsonArray { interviewHour }))
+            );
+
+            var result = await _userCollection.Find(filter).AnyAsync();
+
+            return result;
+
+
+        }
+
+        public Dictionary<string, SortedSet<int>> GetInterviewersWithSchedulesBetweenDates(string interviewerId, DateOnly startDate, DateOnly endDate)
+        {
+
+            // The initial idea was to retrieve the availability list directly with one query.
+            // However, filtering nested documents proved to be a complex task.
+            // Since this is just a demo program to test MongoDB, I will filter it in memory.
+
+            var filter = Builders<Interviewer>.Filter.And(
+                Builders<Interviewer>.Filter.Eq<ObjectId>("_id", ObjectId.Parse(interviewerId)),
+                Builders<Interviewer>.Filter.Eq("_t", typeof(Interviewer).Name)
+            );
+
+            var interviewer = _userCollection.Find(filter).FirstOrDefault();
+
+            if (interviewer == null)
+            {
+                // Handle interviewer not found
+                return new Dictionary<string, SortedSet<int>>();
+            }
+
+            var result = new Dictionary<string, SortedSet<int>>();
+
+
+            foreach (var key in interviewer.Availability.Keys)
+            {
+                if (DateOnly.Parse(key) >= startDate && DateOnly.Parse(key) <= endDate)
+                {
+                    result[key.ToString()] = new SortedSet<int>(interviewer.Availability[key]);
+                }
+            }
+
+            return result;
+
+        }
+
 
     }
 }

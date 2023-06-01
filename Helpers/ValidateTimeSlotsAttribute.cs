@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Interview_Calendar.Helpers
 {
-    public class ValidateTimeSlotsAttribute : ValidationAttribute
+    public sealed class ValidateTimeSlotsAttribute : ValidationAttribute
     {
         protected override ValidationResult IsValid(object value, ValidationContext validationContext)
         {

@@ -3,7 +3,7 @@ using System.Security.Cryptography;
 
 namespace Interview_Calendar.Helpers
 {
-	public class PasswordHasher
+	public sealed class PasswordHasher
 	{
         private const int _saltSize = 128 / 8;
         private const int _keySize = 256 / 8;
