@@ -1,4 +1,5 @@
 ﻿using System;
+using Interview_Calendar.Models.ValueObjects;
 using MongoDB.Bson.Serialization.Attributes;
 using MongoDB.Bson.Serialization.Options;
 
@@ -8,7 +9,7 @@ namespace Interview_Calendar.Models
 	{
         [BsonDictionaryOptions(DictionaryRepresentation.ArrayOfArrays)]
         public Dictionary<string, SortedSet<int>> Availability = new Dictionary<string, SortedSet<int>>();
-        public List<DateTime> Interviews = default!;
+        public List<Interview> Interviews = new List<Interview>();
 	}
 }
 

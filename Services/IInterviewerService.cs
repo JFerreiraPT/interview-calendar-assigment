@@ -12,8 +12,9 @@ namespace Interview_Calendar.Services
         Dictionary<string, SortedSet<int>> GetInterviewersWithSchedulesBetweenDates(string interviewerObjectId, DateOnly startDate, DateOnly endDate);
         Task<bool> RemoveDayAvailability(string interviewerId, DateOnly date);
 
+        Interviewer FindOrFail(string interviewerId);
 
-
+        Task<bool> ScheduleInterview(string interviewerId, string candidateId, DateTime date);
         Task<InterviewerResponseDTO> GetInterviewer(string interviewerId);
     }
 }

@@ -4,27 +4,45 @@
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
     <BreakpointStore />
   </MonoDevelop.Ide.DebuggingService.Breakpoints>
-  <MonoDevelop.Ide.ItemProperties.Interview-Calendar PreferredExecutionTarget="/Applications/Google Chrome.app" />
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Program.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="DTOs/UserDTO.cs">
     <Files>
-      <File FileName="Dockerfile" Line="20" Column="13" />
-      <File FileName="docker-compose.yml" Line="17" Column="38" />
-      <File FileName="docker-compose.override.yml" Line="13" Column="65" />
-      <File FileName="appsettings.json" Line="15" Column="1" />
-      <File FileName="Program.cs" Line="29" Column="27" />
-      <File FileName=".gitignore" Line="398" Column="10" />
-      <File FileName="Data/UserDbConfiguration.cs" Line="4" Column="34" />
+      <File FileName="Services/InterviewerService.cs" Line="108" Column="71" />
+      <File FileName="Models/Interviewer.cs" Line="11" Column="9" />
+      <File FileName="Controllers/InterviewerController.cs" Line="74" Column="1" />
+      <File FileName="Services/IInterviewerService.cs" Line="17" Column="9" />
+      <File FileName="Services/IUserService.cs" Line="14" Column="18" />
+      <File FileName="Models/User.cs" Line="1" Column="1" />
+      <File FileName="Program.cs" Line="16" Column="1" />
+      <File FileName="Helpers/MappingProfile.cs" Line="20" Column="1" />
+      <File FileName="Helpers/PasswordHasher.cs" Line="6" Column="15" />
+      <File FileName="Helpers/ValidateTimeSlotsAttribute.cs" Line="6" Column="18" />
+      <File FileName="DTOs/InterviewerResponseDTO.cs" Line="12" Column="41" />
+      <File FileName="Controllers/CandidateController.cs" Line="26" Column="35" />
+      <File FileName="Services/Helpers/AddUserService.cs" Line="37" Column="39" />
+      <File FileName="DTOs/UserDTO.cs" Line="16" Column="1" />
+      <File FileName="Controllers/WeatherForecastController.cs" Line="1" Column="1" />
+      <File FileName="DTOs/UserCreateDTO.cs" Line="8" Column="1" />
+      <File FileName="Models/Candidate.cs" Line="11" Column="1" />
+      <File FileName="DTOs/CandidateResponseDTO.cs" Line="5" Column="3" />
+      <File FileName="Services/ICandidateService.cs" Line="9" Column="67" />
+      <File FileName="Services/CandidateService.cs" Line="89" Column="17" />
+      <File FileName="DTOs/AddInterviewerDTO.cs" Line="6" Column="32" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
         <State name="__root__">
           <Node name="Interview-Calendar" expanded="True">
-            <Node name="Interview-Calendar" expanded="True" selected="True">
+            <Node name="Interview-Calendar" expanded="True">
               <Node name="Controllers" expanded="True" />
-              <Node name="Data" expanded="True" />
-              <Node name="Properties" expanded="True" />
-              <Node name="docker-compose.yml" expanded="True" />
+              <Node name="DTOs" expanded="True">
+                <Node name="UserDTO.cs" selected="True" />
+              </Node>
+              <Node name="Helpers" expanded="True" />
+              <Node name="Models" expanded="True" />
+              <Node name="Services" expanded="True">
+                <Node name="Helpers" expanded="True" />
+              </Node>
             </Node>
           </Node>
         </State>

@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.DataProtection.KeyManagement;
 using System.Globalization;
 using NodaTime.Text;
+using Interview_Calendar.Models.ValueObjects;
 
 namespace Interview_Calendar.Services
 {
@@ -23,7 +24,8 @@ namespace Interview_Calendar.Services
 
         private readonly AddUserService<Interviewer, UserCreateDTO, InterviewerResponseDTO> _addUserService;
 
-        public InterviewerService(IOptions<UserDbConfiguration> userConfiguration, IMapper mapper, PasswordHasher hasher)
+        public InterviewerService(IOptions<UserDbConfiguration> userConfiguration, IMapper mapper,
+            PasswordHasher hasher)
         {
             _mapper = mapper;
             _passwordHasher = hasher;
@@ -49,7 +51,7 @@ namespace Interview_Calendar.Services
 
             var user = PreCreateUserAsync(dto);
 
-            var entity = await _addUserService.CreateUserAsync(user);
+            var entity = await _addUserService.CreateUserAsync(user, UserType.Interviewer);
 
             return PostCreateUserAsync(entity);
 
@@ -62,6 +64,24 @@ namespace Interview_Calendar.Services
             return _addUserService.PostCreateUserAsync(entity);
         }
 
+        public Interviewer FindOrFail(string interviewerId)
+        {
+            var filter = Builders<Interviewer>.Filter.And(
+                Builders<Interviewer>.Filter.Eq<ObjectId>("_id", ObjectId.Parse(interviewerId)),
+                Builders<Interviewer>.Filter.Eq("_id", typeof(Interviewer).Name),
+                Builders<Interviewer>.Filter.Eq("isActive", true)
+            );
+
+            var interviewer = _userCollection.Find(filter).FirstOrDefault();
+
+            if(interviewer == null)
+            {
+                throw new Exception("Not Found");
+            }
+
+            return interviewer;
+        }
+
 
 
         public async Task<bool> AddAvailability(string interviewerId, DateOnly date, int[] timeSlots)
@@ -71,7 +91,8 @@ namespace Interview_Calendar.Services
             //If date dont exist yet create new sorted list, otherwise update
             var filter = Builders<Interviewer>.Filter.And(
                 Builders<Interviewer>.Filter.Eq<ObjectId>("_id", ObjectId.Parse(interviewerId)),
-                Builders<Interviewer>.Filter.Eq("_t", typeof(Interviewer).Name)
+                Builders<Interviewer>.Filter.Eq("_id", typeof(Interviewer).Name),
+                Builders<Interviewer>.Filter.Eq("isActive", true)
             );
 
             var update = Builders<Interviewer>.Update.Set($"Availability.{date}", new SortedSet<int>(timeSlots));
@@ -84,7 +105,8 @@ namespace Interview_Calendar.Services
         {
             var filter = Builders<Interviewer>.Filter.And(
                 Builders<Interviewer>.Filter.Eq<ObjectId>("_id", ObjectId.Parse(interviewerId)),
-                Builders<Interviewer>.Filter.Eq<string>("_t", typeof(Interviewer).Name)
+                Builders<Interviewer>.Filter.Eq<string>("_id", typeof(Interviewer).Name),
+                Builders<Interviewer>.Filter.Eq("isActive", true)
             );
 
             var update = Builders<Interviewer>.Update.Unset($"Availability.{date}");
@@ -97,12 +119,8 @@ namespace Interview_Calendar.Services
 
         public async Task<InterviewerResponseDTO> GetInterviewer(string interviewerId)
         {
-            var filter = Builders<Interviewer>.Filter.And(
-                Builders<Interviewer>.Filter.Eq<ObjectId>("_id", ObjectId.Parse(interviewerId)),
-                Builders<Interviewer>.Filter.Eq("_t", typeof(Interviewer).Name)
-            );
 
-            var interviewer = await _userCollection.FindAsync(filter);
+            var interviewer = this.FindOrFail(interviewerId);
 
 
             return _mapper.Map<InterviewerResponseDTO>(interviewer);
@@ -117,13 +135,43 @@ namespace Interview_Calendar.Services
             // Build the query to find the document with the specified date and the availability containing the interview hour
             var filter = Builders<Interviewer>.Filter.And(
                 Builders<Interviewer>.Filter.Eq("_id", new ObjectId(interviewerId)),
-                Builders<Interviewer>.Filter.Eq("_t", typeof(Interviewer).Name),
+                Builders<Interviewer>.Filter.Eq("_id", typeof(Interviewer).Name),
+                Builders<Interviewer>.Filter.Eq("isActive", true),
                 Builders<Interviewer>.Filter.Eq($"Availability.{dateString}", new BsonDocument("$in", new BsonArray { interviewHour }))
             );
 
             var result = await _userCollection.Find(filter).AnyAsync();
 
             return result;
+
+
+        }
+
+        private async Task<bool> CheckIfInterviwerAvailableAndRemove(Interviewer interviwer, DateTime interviewTime)
+        {
+
+            string dateString = interviewTime.ToString("MM/dd/yyyy");
+            int interviewHour = interviewTime.Hour;
+
+            if (interviwer.Availability.TryGetValue(dateString, out SortedSet<int> availableHours))
+            {
+                bool isAvailable = availableHours.Contains(interviewHour);
+                if (isAvailable)
+                {
+                    // Remove the availability for the specified date and hour
+                    availableHours.Remove(interviewHour);
+
+                    // If no more available hours exist for the date, remove it from the dictionary
+                    if (availableHours.Count == 0)
+                    {
+                        interviwer.Availability.Remove(dateString);
+                    }
+
+                    return true;
+                }
+            }
+
+            return false;
 
 
         }
@@ -135,18 +183,7 @@ namespace Interview_Calendar.Services
             // However, filtering nested documents proved to be a complex task.
             // Since this is just a demo program to test MongoDB, I will filter it in memory.
 
-            var filter = Builders<Interviewer>.Filter.And(
-                Builders<Interviewer>.Filter.Eq<ObjectId>("_id", ObjectId.Parse(interviewerId)),
-                Builders<Interviewer>.Filter.Eq("_t", typeof(Interviewer).Name)
-            );
-
-            var interviewer = _userCollection.Find(filter).FirstOrDefault();
-
-            if (interviewer == null)
-            {
-                // Handle interviewer not found
-                return new Dictionary<string, SortedSet<int>>();
-            }
+            var interviewer = this.FindOrFail(interviewerId);
 
             var result = new Dictionary<string, SortedSet<int>>();
 
@@ -163,7 +200,40 @@ namespace Interview_Calendar.Services
 
         }
 
+        public async Task<bool> ScheduleInterview(string interviewerId, string candidateId, DateTime date)
+        {
+            var interviewer = FindOrFail(interviewerId);
 
+            //Check for availability
+            if(!(await this.CheckIfInterviwerAvailableAndRemove(interviewer, date)))
+            {
+                throw new Exception("interviewer not available");
+            }
+
+            var interview = new Interview
+            {
+                date = date,
+                CandidateId = candidateId
+            };
+
+
+
+            interviewer.Interviews ??= new List<Interview>();
+            // Add the interview to the interviewer's Interviews list
+            interviewer.Interviews.Add(interview);
+
+
+
+            // Save the changes to the interviewer document in the database
+            var updateResult = await _userCollection.ReplaceOneAsync(
+                Builders<Interviewer>.Filter.Eq<ObjectId>("_id", ObjectId.Parse(interviewerId)),
+                interviewer,
+                new ReplaceOptions { IsUpsert = false });
+
+            // Check if the update was successful
+            return updateResult.ModifiedCount > 0;
+
+        }
     }
 }
 

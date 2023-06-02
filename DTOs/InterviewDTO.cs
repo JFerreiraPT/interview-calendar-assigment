@@ -3,12 +3,10 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Interview_Calendar.DTOs
 {
-	public class UserCreateDTO : UserDTO
+	public class InterviewDTO
 	{
         [Required]
-        [MinLength(8)]
-        public string Password { get; set; } = default!;
-
+        public DateTime date;
     }
 }
 

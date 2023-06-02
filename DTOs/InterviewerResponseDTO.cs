@@ -8,9 +8,9 @@ namespace Interview_Calendar.DTOs
 	{
 
         [JsonPropertyName("availability")]
-        public Dictionary<string, SortedSet<int>> Availability;
+        public Dictionary<string, SortedSet<int>> Availability = default!;
         [JsonPropertyName("interviews")]
-        public List<DateTime> Interviews;
+        public List<DateTime> Interviews = default!;
     }
 }
 

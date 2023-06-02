@@ -4,6 +4,7 @@ using Interview_Calendar.Data;
 using Interview_Calendar.DTOs;
 using Interview_Calendar.Helpers;
 using Interview_Calendar.Models;
+using Interview_Calendar.Models.ValueObjects;
 using Microsoft.Extensions.Options;
 using MongoDB.Driver;
 
@@ -45,11 +46,12 @@ namespace Interview_Calendar.Services
 
             return candidate;
         }
-        public async Task<T> CreateUserAsync(T user)
+        public async Task<T> CreateUserAsync(T user, UserType type)
         {
 
             try
             {
+                user.UserType = type;
                 await _userCollection.InsertOneAsync(user);
 
                 return user;
