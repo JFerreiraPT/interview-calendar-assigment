@@ -75,7 +75,7 @@ namespace Interview_Calendar.Services
                 throw new Exception();
             }
 
-            if (_interviewerService.GetInterviewer(interviwer.interviewerId) == null)
+            if (_interviewerService.FindOrFail(interviwer.interviewerId) == null)
             {
                 throw new Exception();
             }
@@ -106,6 +106,24 @@ namespace Interview_Calendar.Services
 
 
             return _mapper.Map<CandidateResponseDTO>(candidate);
+        }
+
+        public Candidate FindOrFail(string candidateId)
+        {
+            var filter = Builders<Candidate>.Filter.And(
+                Builders<Candidate>.Filter.Eq<ObjectId>("_id", ObjectId.Parse(candidateId)),
+                Builders<Candidate>.Filter.Eq("_t", typeof(Candidate).Name),
+                Builders<Candidate>.Filter.Eq("isActive", true)
+            );
+
+            var candidate = _userCollection.Find(filter).FirstOrDefault();
+
+            if(candidate == null)
+            {
+                throw new Exception("Not Found");
+            }
+
+            return candidate;
         }
     }
 }

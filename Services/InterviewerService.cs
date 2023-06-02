@@ -20,13 +20,16 @@ namespace Interview_Calendar.Services
         private readonly IMongoCollection<Interviewer> _userCollection;
         private readonly IMapper _mapper;
         private readonly PasswordHasher _passwordHasher;
+        private readonly ICandidateService _candidateService;
 
         private readonly AddUserService<Interviewer, UserCreateDTO, InterviewerResponseDTO> _addUserService;
 
-        public InterviewerService(IOptions<UserDbConfiguration> userConfiguration, IMapper mapper, PasswordHasher hasher)
+        public InterviewerService(IOptions<UserDbConfiguration> userConfiguration, IMapper mapper,
+            PasswordHasher hasher, ICandidateService candidateService)
         {
             _mapper = mapper;
             _passwordHasher = hasher;
+            _candidateService = candidateService;
             var mongoClient = new MongoClient(userConfiguration.Value.ConnectionString);
             var userDatabase = mongoClient.GetDatabase(userConfiguration.Value.DatabaseName);
             _userCollection = userDatabase.GetCollection<Interviewer>(userConfiguration.Value.UserCollectionName);
@@ -60,6 +63,24 @@ namespace Interview_Calendar.Services
             //map to response dto and handle post dependencies if any
 
             return _addUserService.PostCreateUserAsync(entity);
+        }
+
+        public Interviewer FindOrFail(string interviewerId)
+        {
+            var filter = Builders<Interviewer>.Filter.And(
+                Builders<Interviewer>.Filter.Eq<ObjectId>("_id", ObjectId.Parse(interviewerId)),
+                Builders<Interviewer>.Filter.Eq("_t", typeof(Interviewer).Name),
+                Builders<Interviewer>.Filter.Eq("isActive", true)
+            );
+
+            var interviewer = _userCollection.Find(filter).FirstOrDefault();
+
+            if(interviewer == null)
+            {
+                throw new Exception("Not Found");
+            }
+
+            return interviewer;
         }
 
 
@@ -99,13 +120,8 @@ namespace Interview_Calendar.Services
 
         public async Task<InterviewerResponseDTO> GetInterviewer(string interviewerId)
         {
-            var filter = Builders<Interviewer>.Filter.And(
-                Builders<Interviewer>.Filter.Eq<ObjectId>("_id", ObjectId.Parse(interviewerId)),
-                Builders<Interviewer>.Filter.Eq("_t", typeof(Interviewer).Name),
-                Builders<Interviewer>.Filter.Eq("isActive", true)
-            );
 
-            var interviewer = await _userCollection.FindAsync(filter);
+            var interviewer = this.FindOrFail(interviewerId);
 
 
             return _mapper.Map<InterviewerResponseDTO>(interviewer);
@@ -139,19 +155,7 @@ namespace Interview_Calendar.Services
             // However, filtering nested documents proved to be a complex task.
             // Since this is just a demo program to test MongoDB, I will filter it in memory.
 
-            var filter = Builders<Interviewer>.Filter.And(
-                Builders<Interviewer>.Filter.Eq<ObjectId>("_id", ObjectId.Parse(interviewerId)),
-                Builders<Interviewer>.Filter.Eq("_t", typeof(Interviewer).Name),
-                Builders<Interviewer>.Filter.Eq("isActive", true)
-            );
-
-            var interviewer = _userCollection.Find(filter).FirstOrDefault();
-
-            if (interviewer == null)
-            {
-                // Handle interviewer not found
-                return new Dictionary<string, SortedSet<int>>();
-            }
+            var interviewer = this.FindOrFail(interviewerId);
 
             var result = new Dictionary<string, SortedSet<int>>();
 
@@ -168,7 +172,14 @@ namespace Interview_Calendar.Services
 
         }
 
+        public Task<bool> ScheduleInterview(string interviewerId, string candidateId)
+        {
+            //check if interviewer exists
+            var interviewer = FindOrFail(interviewerId);
+            var candidate = _candidateService.FindOrFail(candidateId);
 
+            throw new NotImplementedException();
+        }
     }
 }
 
