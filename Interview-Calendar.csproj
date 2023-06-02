@@ -29,6 +29,7 @@
     <None Remove="DTOs\" />
     <None Remove="Helpers\" />
     <None Remove="Services\Helpers\" />
+    <None Remove="Models\ValueObjects\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Data\" />
@@ -37,5 +38,6 @@
     <Folder Include="DTOs\" />
     <Folder Include="Helpers\" />
     <Folder Include="Services\Helpers\" />
+    <Folder Include="Models\ValueObjects\" />
   </ItemGroup>
 </Project>

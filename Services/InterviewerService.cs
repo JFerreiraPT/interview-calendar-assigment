@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.DataProtection.KeyManagement;
 using System.Globalization;
 using NodaTime.Text;
+using Interview_Calendar.Models.ValueObjects;
 
 namespace Interview_Calendar.Services
 {
@@ -20,16 +21,14 @@ namespace Interview_Calendar.Services
         private readonly IMongoCollection<Interviewer> _userCollection;
         private readonly IMapper _mapper;
         private readonly PasswordHasher _passwordHasher;
-        private readonly ICandidateService _candidateService;
 
         private readonly AddUserService<Interviewer, UserCreateDTO, InterviewerResponseDTO> _addUserService;
 
         public InterviewerService(IOptions<UserDbConfiguration> userConfiguration, IMapper mapper,
-            PasswordHasher hasher, ICandidateService candidateService)
+            PasswordHasher hasher)
         {
             _mapper = mapper;
             _passwordHasher = hasher;
-            _candidateService = candidateService;
             var mongoClient = new MongoClient(userConfiguration.Value.ConnectionString);
             var userDatabase = mongoClient.GetDatabase(userConfiguration.Value.DatabaseName);
             _userCollection = userDatabase.GetCollection<Interviewer>(userConfiguration.Value.UserCollectionName);
@@ -148,6 +147,35 @@ namespace Interview_Calendar.Services
 
         }
 
+        private async Task<bool> CheckIfInterviwerAvailableAndRemove(Interviewer interviwer, DateTime interviewTime)
+        {
+
+            string dateString = interviewTime.ToString("MM/dd/yyyy");
+            int interviewHour = interviewTime.Hour;
+
+            if (interviwer.Availability.TryGetValue(dateString, out SortedSet<int> availableHours))
+            {
+                bool isAvailable = availableHours.Contains(interviewHour);
+                if (isAvailable)
+                {
+                    // Remove the availability for the specified date and hour
+                    availableHours.Remove(interviewHour);
+
+                    // If no more available hours exist for the date, remove it from the dictionary
+                    if (availableHours.Count == 0)
+                    {
+                        interviwer.Availability.Remove(dateString);
+                    }
+
+                    return true;
+                }
+            }
+
+            return false;
+
+
+        }
+
         public Dictionary<string, SortedSet<int>> GetInterviewersWithSchedulesBetweenDates(string interviewerId, DateOnly startDate, DateOnly endDate)
         {
 
@@ -172,13 +200,34 @@ namespace Interview_Calendar.Services
 
         }
 
-        public Task<bool> ScheduleInterview(string interviewerId, string candidateId)
+        public async Task<bool> ScheduleInterview(string interviewerId, string candidateId, DateTime date)
         {
-            //check if interviewer exists
             var interviewer = FindOrFail(interviewerId);
-            var candidate = _candidateService.FindOrFail(candidateId);
 
-            throw new NotImplementedException();
+            //Check for availability
+            if(!(await this.CheckIfInterviwerAvailableAndRemove(interviewer, date)))
+            {
+                throw new Exception("interviewer not available");
+            }
+
+            var interview = new Interview
+            {
+                date = date,
+                CandidateId = candidateId
+            };
+
+
+            // Add the interview to the interviewer's Interviews list
+            interviewer.Interviews.Add(interview);
+
+            // Save the changes to the interviewer document in the database
+            var updateResult = await _userCollection.ReplaceOneAsync(
+                Builders<Interviewer>.Filter.Eq("_id ", interviewer.Id),
+                interviewer);
+
+            // Check if the update was successful
+            return updateResult.ModifiedCount > 0;
+
         }
     }
 }

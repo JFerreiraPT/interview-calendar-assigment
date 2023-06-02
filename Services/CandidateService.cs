@@ -4,6 +4,7 @@ using Interview_Calendar.Data;
 using Interview_Calendar.DTOs;
 using Interview_Calendar.Helpers;
 using Interview_Calendar.Models;
+using Interview_Calendar.Models.ValueObjects;
 using Microsoft.Extensions.Options;
 using MongoDB.Bson;
 using MongoDB.Driver;
@@ -124,6 +125,43 @@ namespace Interview_Calendar.Services
             }
 
             return candidate;
+        }
+
+        public async Task<bool> ScheduleInterview(string candidateId, DateTime date)
+        {
+            //check if interviewer exists
+            var candidate = FindOrFail(candidateId);
+
+            //check if candidate has an interviewer associated
+            if(candidate.InterviewerId == null)
+            {
+                throw new Exception("No Interviewer yet");
+            }
+
+            
+
+            //Add to interviwer and remove availability
+            await _interviewerService.ScheduleInterview(candidate.InterviewerId, candidateId, date);
+
+
+            var interview = new Interview
+            {
+                date = date,
+                InterviewerId = candidate.InterviewerId
+            };
+
+
+            // Add the interview to the interviewer's Interviews list
+            candidate.Interview = interview;
+
+            // Save the changes to the interviewer document in the database
+            var updateResult = await _userCollection.ReplaceOneAsync(
+                Builders<Candidate>.Filter.Eq("_id ", ObjectId.Parse(candidateId)),
+                candidate);
+
+            // Check if the update was successful
+            return updateResult.ModifiedCount > 0;
+
         }
     }
 }

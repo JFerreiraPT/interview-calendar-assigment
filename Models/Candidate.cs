@@ -1,9 +1,11 @@
 ﻿using System;
+using Interview_Calendar.Models.ValueObjects;
+
 namespace Interview_Calendar.Models
 {
 	public class Candidate : User
 	{
-        public DateTime Interview = default!;
+        public Interview Interview = default!;
         public string InterviewerId = default!;
     }
 }

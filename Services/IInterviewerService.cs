@@ -14,7 +14,7 @@ namespace Interview_Calendar.Services
 
         Interviewer FindOrFail(string interviewerId);
 
-        Task<bool> ScheduleInterview(string interviewerId, string candidateId);
+        Task<bool> ScheduleInterview(string interviewerId, string candidateId, DateTime date);
         Task<InterviewerResponseDTO> GetInterviewer(string interviewerId);
     }
 }

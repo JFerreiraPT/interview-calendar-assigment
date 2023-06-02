@@ -50,15 +50,15 @@ if (app.Environment.IsDevelopment())
 }
 
 //We need this to serialize Availability property in order to be able to seacrh for it
-//BsonClassMap.RegisterClassMap<Interviewer>(cm =>
-//{
-//    cm.AutoMap();
-//    var memberMap = cm.GetMemberMap(x => x.Availability);
-//    var serializer = memberMap.GetSerializer();
-//    if (serializer is IDictionaryRepresentationConfigurable dictionaryRepresentationSerializer)
-//        serializer = dictionaryRepresentationSerializer.WithDictionaryRepresentation(DictionaryRepresentation.ArrayOfDocuments);
-//    memberMap.SetSerializer(serializer);
-//});
+BsonClassMap.RegisterClassMap<Interviewer>(cm =>
+{
+    cm.AutoMap();
+var memberMap = cm.GetMemberMap(x => x.Availability);
+var serializer = memberMap.GetSerializer();
+if (serializer is IDictionaryRepresentationConfigurable dictionaryRepresentationSerializer)
+    serializer = dictionaryRepresentationSerializer.WithDictionaryRepresentation(DictionaryRepresentation.ArrayOfDocuments);
+memberMap.SetSerializer(serializer);
+});
 
 
 

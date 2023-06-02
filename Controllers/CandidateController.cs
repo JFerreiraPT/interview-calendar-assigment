@@ -30,6 +30,13 @@ namespace Interview_Calendar.Controllers
             return Ok();
         }
 
+        [HttpPost("/{id}/interview")]
+        public async Task<IActionResult> AddInterview(string id, InterviewDTO interview)
+        {
+            var added = await _candidateService.ScheduleInterview(id, interview.date);
+            return Ok();
+        }
+
     }
 }
 
