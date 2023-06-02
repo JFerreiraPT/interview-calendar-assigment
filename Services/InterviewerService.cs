@@ -51,7 +51,7 @@ namespace Interview_Calendar.Services
 
             var user = PreCreateUserAsync(dto);
 
-            var entity = await _addUserService.CreateUserAsync(user);
+            var entity = await _addUserService.CreateUserAsync(user, UserType.Interviewer);
 
             return PostCreateUserAsync(entity);
 
@@ -68,7 +68,7 @@ namespace Interview_Calendar.Services
         {
             var filter = Builders<Interviewer>.Filter.And(
                 Builders<Interviewer>.Filter.Eq<ObjectId>("_id", ObjectId.Parse(interviewerId)),
-                Builders<Interviewer>.Filter.Eq("_t", typeof(Interviewer).Name),
+                Builders<Interviewer>.Filter.Eq("_id", typeof(Interviewer).Name),
                 Builders<Interviewer>.Filter.Eq("isActive", true)
             );
 
@@ -91,7 +91,7 @@ namespace Interview_Calendar.Services
             //If date dont exist yet create new sorted list, otherwise update
             var filter = Builders<Interviewer>.Filter.And(
                 Builders<Interviewer>.Filter.Eq<ObjectId>("_id", ObjectId.Parse(interviewerId)),
-                Builders<Interviewer>.Filter.Eq("_t", typeof(Interviewer).Name),
+                Builders<Interviewer>.Filter.Eq("_id", typeof(Interviewer).Name),
                 Builders<Interviewer>.Filter.Eq("isActive", true)
             );
 
@@ -105,7 +105,7 @@ namespace Interview_Calendar.Services
         {
             var filter = Builders<Interviewer>.Filter.And(
                 Builders<Interviewer>.Filter.Eq<ObjectId>("_id", ObjectId.Parse(interviewerId)),
-                Builders<Interviewer>.Filter.Eq<string>("_t", typeof(Interviewer).Name),
+                Builders<Interviewer>.Filter.Eq<string>("_id", typeof(Interviewer).Name),
                 Builders<Interviewer>.Filter.Eq("isActive", true)
             );
 
@@ -135,7 +135,7 @@ namespace Interview_Calendar.Services
             // Build the query to find the document with the specified date and the availability containing the interview hour
             var filter = Builders<Interviewer>.Filter.And(
                 Builders<Interviewer>.Filter.Eq("_id", new ObjectId(interviewerId)),
-                Builders<Interviewer>.Filter.Eq("_t", typeof(Interviewer).Name),
+                Builders<Interviewer>.Filter.Eq("_id", typeof(Interviewer).Name),
                 Builders<Interviewer>.Filter.Eq("isActive", true),
                 Builders<Interviewer>.Filter.Eq($"Availability.{dateString}", new BsonDocument("$in", new BsonArray { interviewHour }))
             );
@@ -217,13 +217,18 @@ namespace Interview_Calendar.Services
             };
 
 
+
+            interviewer.Interviews ??= new List<Interview>();
             // Add the interview to the interviewer's Interviews list
             interviewer.Interviews.Add(interview);
 
+
+
             // Save the changes to the interviewer document in the database
             var updateResult = await _userCollection.ReplaceOneAsync(
-                Builders<Interviewer>.Filter.Eq("_id ", interviewer.Id),
-                interviewer);
+                Builders<Interviewer>.Filter.Eq<ObjectId>("_id", ObjectId.Parse(interviewerId)),
+                interviewer,
+                new ReplaceOptions { IsUpsert = false });
 
             // Check if the update was successful
             return updateResult.ModifiedCount > 0;

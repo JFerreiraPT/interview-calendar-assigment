@@ -9,7 +9,7 @@ namespace Interview_Calendar.Models
 	{
         [BsonDictionaryOptions(DictionaryRepresentation.ArrayOfArrays)]
         public Dictionary<string, SortedSet<int>> Availability = new Dictionary<string, SortedSet<int>>();
-        public List<Interview> Interviews = default!;
+        public List<Interview> Interviews = new List<Interview>();
 	}
 }
 

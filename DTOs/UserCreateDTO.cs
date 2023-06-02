@@ -8,6 +8,7 @@ namespace Interview_Calendar.DTOs
         [Required]
         [MinLength(8)]
         public string Password { get; set; } = default!;
+
     }
 }
 

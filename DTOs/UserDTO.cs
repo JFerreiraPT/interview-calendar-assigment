@@ -1,5 +1,7 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
+using Interview_Calendar.Models.ValueObjects;
+using MongoDB.Bson.Serialization.Attributes;
 
 namespace Interview_Calendar.DTOs
 {

@@ -49,7 +49,7 @@ namespace Interview_Calendar.Services
             //add to db context
             var user = PreCreateUserAsync(dto);
 
-            var entity = await _addUserService.CreateUserAsync(user);
+            var entity = await _addUserService.CreateUserAsync(user, UserType.Candidate);
 
             return PostCreateUserAsync(entity);
 
@@ -87,7 +87,7 @@ namespace Interview_Calendar.Services
             var updateResult = await _userCollection.ReplaceOneAsync(
                 filter,
                 candidate,
-                new ReplaceOptions { IsUpsert = true }
+                new ReplaceOptions { IsUpsert = false }
             );
 
             return updateResult.IsAcknowledged && updateResult.ModifiedCount > 0;
@@ -141,8 +141,9 @@ namespace Interview_Calendar.Services
             
 
             //Add to interviwer and remove availability
-            await _interviewerService.ScheduleInterview(candidate.InterviewerId, candidateId, date);
+            var added = await _interviewerService.ScheduleInterview(candidate.InterviewerId, candidateId, date);
 
+            Console.WriteLine("Lines added? " + added);
 
             var interview = new Interview
             {
@@ -156,7 +157,7 @@ namespace Interview_Calendar.Services
 
             // Save the changes to the interviewer document in the database
             var updateResult = await _userCollection.ReplaceOneAsync(
-                Builders<Candidate>.Filter.Eq("_id ", ObjectId.Parse(candidateId)),
+                Builders<Candidate>.Filter.Eq<ObjectId>("_id", ObjectId.Parse(candidateId)),
                 candidate);
 
             // Check if the update was successful
