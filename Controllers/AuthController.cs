@@ -21,7 +21,9 @@ namespace Interview_Calendar.Controllers
         [HttpPost]
         public async Task<IActionResult> Login(LoginDTO loginDto)
         {
-            return Ok();
+            var token = _authService.Login(loginDto);
+
+            return Ok(token);
         }
     }
 
