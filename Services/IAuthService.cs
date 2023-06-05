@@ -1,4 +1,5 @@
 ﻿using System;
+using Interview_Calendar.DTOs;
 using Interview_Calendar.Models;
 
 namespace Interview_Calendar.Services
@@ -7,6 +8,7 @@ namespace Interview_Calendar.Services
 	{
 
         string GenerateToken(User user);
+        string Login(LoginDTO loginDTO);
 
     }
 }
