@@ -2,8 +2,10 @@
 using Interview_Calendar.DTOs;
 using Interview_Calendar.Models;
 using Interview_Calendar.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MongoDB.Bson;
+using static Interview_Calendar.Models.RequiresClaimAttributes;
 
 namespace Interview_Calendar.Controllers
 {
@@ -20,6 +22,8 @@ namespace Interview_Calendar.Controllers
 
 
         [HttpPost]
+        //[Authorize]
+        //[RequiresClaim(IdentityData.InterviewerUserClaim, "Interviewer")]
         public async Task<IActionResult> Create(UserCreateDTO userCreate)
         {
             var user = await _interviewerService.CreateUserAsync(userCreate);
@@ -29,6 +33,8 @@ namespace Interview_Calendar.Controllers
 
 
         [HttpPost("{interviewerId}/availability")]
+        [Authorize]
+        [RequiresClaim(IdentityData.InterviewerUserPolicyName, "Interviewer")]
         public async Task<IActionResult> AddAvailability(string interviewerId, [FromBody] AvailabilityRequestDTO request)
         {
             try
@@ -43,6 +49,8 @@ namespace Interview_Calendar.Controllers
         }
 
         [HttpDelete("{interviewerId}/availability")]
+        [Authorize]
+        [RequiresClaim(IdentityData.InterviewerUserPolicyName, "Interviewer")]
         public async Task<IActionResult> RemoveAvailability(string interviewerId, [FromBody] AvailabilityRequestDTO request)
         {
             try
@@ -58,6 +66,8 @@ namespace Interview_Calendar.Controllers
 
 
         [HttpGet("{interviewerId}/availability")]
+        [Authorize]
+        [RequiresClaim(IdentityData.InterviewerUserPolicyName, "Interviewer")]
         public IActionResult GetInterviewersWithSchedulesBetweenDates(string interviewerId, DateOnly startDate, DateOnly endDate)
         {
             // If no startDate is provided, set it to one day less than endDate or today's date

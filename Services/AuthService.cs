@@ -19,7 +19,7 @@ namespace Interview_Calendar.Services
         private const string TokenSecret = "57ab60f27d4192327fceda761b407a86061be862d48047e33e3c8120cf35ec13";
         private static readonly TimeSpan TokenLifetime = TimeSpan.FromHours(8);
 
-        private readonly IMongoCollection<Candidate> _userCollection;
+        private readonly IMongoCollection<User> _userCollection;
         private readonly IMapper _mapper;
         private readonly PasswordHasher _passwordHasher;
 
@@ -30,7 +30,7 @@ namespace Interview_Calendar.Services
             _passwordHasher = hasher;
             var mongoClient = new MongoClient(userConfiguration.Value.ConnectionString);
             var userDatabase = mongoClient.GetDatabase(userConfiguration.Value.DatabaseName);
-            _userCollection = userDatabase.GetCollection<Candidate>(userConfiguration.Value.UserCollectionName);
+            _userCollection = userDatabase.GetCollection<User>(userConfiguration.Value.UserCollectionName);
         }
 
 
@@ -46,7 +46,7 @@ namespace Interview_Calendar.Services
                 new(JwtRegisteredClaimNames.Email, user.Email),
                 new("userid", user.Id.ToString()),
                 //Todo: should be improved
-                new("role", user.UserType.ToString())
+                new("userType", user.UserType.ToString())
             };
 
             var tokenDescriptor = new SecurityTokenDescriptor
