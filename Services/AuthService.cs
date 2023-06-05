@@ -53,8 +53,8 @@ namespace Interview_Calendar.Services
             {
                 Subject = new ClaimsIdentity(claims),
                 Expires = DateTime.UtcNow.Add(TokenLifetime),
-                Issuer = "https://testapi.com",
-                Audience = "https://testAudience.com",
+                Issuer = "https://interview-calendar-api.com",
+                Audience = "https://interview-calendar-ui.com",
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(Encoding.UTF8.GetBytes(TokenSecret)), SecurityAlgorithms.HmacSha512Signature)
             };
 
