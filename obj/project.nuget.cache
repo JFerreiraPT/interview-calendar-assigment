@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "NieaxWb+FaWFLfrTLubdIImSRsoN8JWplC2epOp3N6JvnF4VYXz69hOtwwoMbdfmSrcRe+03A6lLH3Ap9bAuhA==",
+  "dgSpecHash": "ZAZjBPfayW5nsp6hq1ign5BXFvenW7A6yl5nhGmPL89Wi7LzruEIkVTzd74uGr0PFo75RotjvjVAg7MRi6j9Ew==",
   "success": true,
   "projectFilePath": "/Users/joaoferreira/Dev/training_projects/C#/interview-calendar-assignment/Interview-Calendar/Interview-Calendar.csproj",
   "expectedPackageFiles": [
@@ -18,7 +18,12 @@
     "/Users/joaoferreira/.nuget/packages/microsoft.extensions.logging.abstractions/2.0.0/microsoft.extensions.logging.abstractions.2.0.0.nupkg.sha512",
     "/Users/joaoferreira/.nuget/packages/microsoft.extensions.options/6.0.0/microsoft.extensions.options.6.0.0.nupkg.sha512",
     "/Users/joaoferreira/.nuget/packages/microsoft.extensions.primitives/6.0.0/microsoft.extensions.primitives.6.0.0.nupkg.sha512",
+    "/Users/joaoferreira/.nuget/packages/microsoft.identitymodel.abstractions/6.30.1/microsoft.identitymodel.abstractions.6.30.1.nupkg.sha512",
+    "/Users/joaoferreira/.nuget/packages/microsoft.identitymodel.jsonwebtokens/6.30.1/microsoft.identitymodel.jsonwebtokens.6.30.1.nupkg.sha512",
+    "/Users/joaoferreira/.nuget/packages/microsoft.identitymodel.logging/6.30.1/microsoft.identitymodel.logging.6.30.1.nupkg.sha512",
+    "/Users/joaoferreira/.nuget/packages/microsoft.identitymodel.tokens/6.30.1/microsoft.identitymodel.tokens.6.30.1.nupkg.sha512",
     "/Users/joaoferreira/.nuget/packages/microsoft.netcore.platforms/5.0.0/microsoft.netcore.platforms.5.0.0.nupkg.sha512",
+    "/Users/joaoferreira/.nuget/packages/microsoft.netcore.targets/1.1.0/microsoft.netcore.targets.1.1.0.nupkg.sha512",
     "/Users/joaoferreira/.nuget/packages/microsoft.openapi/1.4.3/microsoft.openapi.1.4.3.nupkg.sha512",
     "/Users/joaoferreira/.nuget/packages/microsoft.win32.registry/5.0.0/microsoft.win32.registry.5.0.0.nupkg.sha512",
     "/Users/joaoferreira/.nuget/packages/mongodb.bson/2.19.2/mongodb.bson.2.19.2.nupkg.sha512",
@@ -35,9 +40,15 @@
     "/Users/joaoferreira/.nuget/packages/swashbuckle.aspnetcore.swaggergen/6.4.0/swashbuckle.aspnetcore.swaggergen.6.4.0.nupkg.sha512",
     "/Users/joaoferreira/.nuget/packages/swashbuckle.aspnetcore.swaggerui/6.4.0/swashbuckle.aspnetcore.swaggerui.6.4.0.nupkg.sha512",
     "/Users/joaoferreira/.nuget/packages/system.buffers/4.5.1/system.buffers.4.5.1.nupkg.sha512",
+    "/Users/joaoferreira/.nuget/packages/system.identitymodel.tokens.jwt/6.30.1/system.identitymodel.tokens.jwt.6.30.1.nupkg.sha512",
+    "/Users/joaoferreira/.nuget/packages/system.runtime/4.3.0/system.runtime.4.3.0.nupkg.sha512",
     "/Users/joaoferreira/.nuget/packages/system.runtime.compilerservices.unsafe/6.0.0/system.runtime.compilerservices.unsafe.6.0.0.nupkg.sha512",
     "/Users/joaoferreira/.nuget/packages/system.security.accesscontrol/5.0.0/system.security.accesscontrol.5.0.0.nupkg.sha512",
+    "/Users/joaoferreira/.nuget/packages/system.security.cryptography.cng/4.5.0/system.security.cryptography.cng.4.5.0.nupkg.sha512",
     "/Users/joaoferreira/.nuget/packages/system.security.principal.windows/5.0.0/system.security.principal.windows.5.0.0.nupkg.sha512",
+    "/Users/joaoferreira/.nuget/packages/system.text.encoding/4.3.0/system.text.encoding.4.3.0.nupkg.sha512",
+    "/Users/joaoferreira/.nuget/packages/system.text.encodings.web/4.7.2/system.text.encodings.web.4.7.2.nupkg.sha512",
+    "/Users/joaoferreira/.nuget/packages/system.text.json/4.7.2/system.text.json.4.7.2.nupkg.sha512",
     "/Users/joaoferreira/.nuget/packages/zstdsharp.port/0.6.2/zstdsharp.port.0.6.2.nupkg.sha512"
   ],
   "logs": []
