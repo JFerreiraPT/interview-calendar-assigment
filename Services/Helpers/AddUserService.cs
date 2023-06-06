@@ -2,6 +2,7 @@
 using AutoMapper;
 using Interview_Calendar.Data;
 using Interview_Calendar.DTOs;
+using Interview_Calendar.Exceptions;
 using Interview_Calendar.Helpers;
 using Interview_Calendar.Models;
 using Interview_Calendar.Models.ValueObjects;
@@ -12,7 +13,7 @@ using MongoDB.Driver;
 
 namespace Interview_Calendar.Services
 {
-	public class AddUserService<T, DI, DO>
+    public class AddUserService<T, DI, DO>
         where T : User
         where DI : UserCreateDTO
         where DO : UserDTO
@@ -35,7 +36,7 @@ namespace Interview_Calendar.Services
 
             if (userExists)
             {
-                throw new Exception();
+                throw new ResourceExistsException($"User with email {dto.Email} already exists");
             }
 
             //hash password
@@ -49,19 +50,11 @@ namespace Interview_Calendar.Services
         public async Task<T> CreateUserAsync(T user, UserType type)
         {
 
-            try
-            {
-                user.UserType = type;
-                await _userCollection.InsertOneAsync(user);
+            user.UserType = type;
+            await _userCollection.InsertOneAsync(user);
 
-                return user;
+            return user;
 
-            }
-            catch (Exception ex)
-            {
-                //Todo:Throw exception
-                throw new Exception();
-            }
         }
 
         public DO PostCreateUserAsync(T entity)

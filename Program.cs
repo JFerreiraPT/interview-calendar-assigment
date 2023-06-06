@@ -1,9 +1,11 @@
 using System.Text;
 using Interview_Calendar.Data;
+using Interview_Calendar.Filters;
 using Interview_Calendar.Helpers;
 using Interview_Calendar.Models;
 using Interview_Calendar.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.IdentityModel.Tokens;
 using MongoDB.Bson.Serialization;
 using MongoDB.Bson.Serialization.Options;
@@ -17,7 +19,11 @@ builder.Services.AddControllers().AddJsonOptions(options =>
     options.JsonSerializerOptions.DictionaryKeyPolicy = null;
 });
 
-builder.Services.AddControllers().AddNewtonsoftJson();
+builder.Services.AddControllers(c =>
+{
+    c.Filters.Add<InterviewCalendarExceptionFilter>();
+}
+).AddNewtonsoftJson();
 
 //Configure Database Connection
 builder.Services.Configure<UserDbConfiguration>(
@@ -80,6 +86,7 @@ builder.Services.AddAuthorization(
 
 
 var app = builder.Build();
+
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
