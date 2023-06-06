@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "ZAZjBPfayW5nsp6hq1ign5BXFvenW7A6yl5nhGmPL89Wi7LzruEIkVTzd74uGr0PFo75RotjvjVAg7MRi6j9Ew==",
+  "dgSpecHash": "mQXpfM0sibNGduZAq6Naz5hKGTryicc5KWvuWu9w3053vHeESCdPbx1ge7BKYYbOLuoGMnn3bmTRjZXj9HVUoQ==",
   "success": true,
   "projectFilePath": "/Users/joaoferreira/Dev/training_projects/C#/interview-calendar-assignment/Interview-Calendar/Interview-Calendar.csproj",
   "expectedPackageFiles": [
@@ -9,6 +9,7 @@
     "/Users/joaoferreira/.nuget/packages/awssdk.core/3.7.100.14/awssdk.core.3.7.100.14.nupkg.sha512",
     "/Users/joaoferreira/.nuget/packages/awssdk.securitytoken/3.7.100.14/awssdk.securitytoken.3.7.100.14.nupkg.sha512",
     "/Users/joaoferreira/.nuget/packages/dnsclient/1.6.1/dnsclient.1.6.1.nupkg.sha512",
+    "/Users/joaoferreira/.nuget/packages/microsoft.aspnetcore.authentication.jwtbearer/7.0.5/microsoft.aspnetcore.authentication.jwtbearer.7.0.5.nupkg.sha512",
     "/Users/joaoferreira/.nuget/packages/microsoft.aspnetcore.jsonpatch/7.0.5/microsoft.aspnetcore.jsonpatch.7.0.5.nupkg.sha512",
     "/Users/joaoferreira/.nuget/packages/microsoft.aspnetcore.mvc.newtonsoftjson/7.0.5/microsoft.aspnetcore.mvc.newtonsoftjson.7.0.5.nupkg.sha512",
     "/Users/joaoferreira/.nuget/packages/microsoft.aspnetcore.openapi/7.0.5/microsoft.aspnetcore.openapi.7.0.5.nupkg.sha512",
@@ -21,6 +22,8 @@
     "/Users/joaoferreira/.nuget/packages/microsoft.identitymodel.abstractions/6.30.1/microsoft.identitymodel.abstractions.6.30.1.nupkg.sha512",
     "/Users/joaoferreira/.nuget/packages/microsoft.identitymodel.jsonwebtokens/6.30.1/microsoft.identitymodel.jsonwebtokens.6.30.1.nupkg.sha512",
     "/Users/joaoferreira/.nuget/packages/microsoft.identitymodel.logging/6.30.1/microsoft.identitymodel.logging.6.30.1.nupkg.sha512",
+    "/Users/joaoferreira/.nuget/packages/microsoft.identitymodel.protocols/6.15.1/microsoft.identitymodel.protocols.6.15.1.nupkg.sha512",
+    "/Users/joaoferreira/.nuget/packages/microsoft.identitymodel.protocols.openidconnect/6.15.1/microsoft.identitymodel.protocols.openidconnect.6.15.1.nupkg.sha512",
     "/Users/joaoferreira/.nuget/packages/microsoft.identitymodel.tokens/6.30.1/microsoft.identitymodel.tokens.6.30.1.nupkg.sha512",
     "/Users/joaoferreira/.nuget/packages/microsoft.netcore.platforms/5.0.0/microsoft.netcore.platforms.5.0.0.nupkg.sha512",
     "/Users/joaoferreira/.nuget/packages/microsoft.netcore.targets/1.1.0/microsoft.netcore.targets.1.1.0.nupkg.sha512",
