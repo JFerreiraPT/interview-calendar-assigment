@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.DataProtection.KeyManagement;
 using System.Globalization;
 using NodaTime.Text;
 using Interview_Calendar.Models.ValueObjects;
+using Interview_Calendar.Exceptions;
 
 namespace Interview_Calendar.Services
 {
@@ -76,7 +77,7 @@ namespace Interview_Calendar.Services
 
             if(interviewer == null)
             {
-                throw new Exception("Not Found");
+                throw new NotFoundException("Interviwer Not Found");
             }
 
             return interviewer;
@@ -207,7 +208,7 @@ namespace Interview_Calendar.Services
             //Check for availability
             if(!(await this.CheckIfInterviwerAvailableAndRemove(interviewer, date)))
             {
-                throw new Exception("interviewer not available");
+                throw new ValidationErrorException("Interviwer not available");
             }
 
             var interview = new Interview

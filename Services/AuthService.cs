@@ -5,6 +5,7 @@ using System.Text;
 using AutoMapper;
 using Interview_Calendar.Data;
 using Interview_Calendar.DTOs;
+using Interview_Calendar.Exceptions;
 using Interview_Calendar.Helpers;
 using Interview_Calendar.Models;
 using Interview_Calendar.Models.ValueObjects;
@@ -69,12 +70,12 @@ namespace Interview_Calendar.Services
             var user =_userCollection.Find(x => x.Email == loginDTO.Email).FirstOrDefault();
             if(user == null)
             {
-                throw new Exception("User not found exception");
+                throw new NotFoundException("User not found exception");
             }
 
             if(!_passwordHasher.verify(user.Password, loginDTO.Password))
             {
-                throw new Exception("Invalid credentials");
+                throw new InvalidCredentialsException("Invalid credentials");
             }
 
             return GenerateToken(user);

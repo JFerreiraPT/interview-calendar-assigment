@@ -2,6 +2,7 @@
 using AutoMapper;
 using Interview_Calendar.Data;
 using Interview_Calendar.DTOs;
+using Interview_Calendar.Exceptions;
 using Interview_Calendar.Helpers;
 using Interview_Calendar.Models;
 using Interview_Calendar.Models.ValueObjects;
@@ -73,12 +74,12 @@ namespace Interview_Calendar.Services
 
             if (candidate == null)
             {
-                throw new Exception();
+                throw new NotFoundException("Candidate Not Found");
             }
 
             if (_interviewerService.FindOrFail(interviwer.interviewerId) == null)
             {
-                throw new Exception();
+                throw new NotFoundException("Interviewer Not Found");
             }
 
             //Add
@@ -121,7 +122,7 @@ namespace Interview_Calendar.Services
 
             if(candidate == null)
             {
-                throw new Exception("Not Found");
+                throw new NotFoundException("Candidate Not Found");
             }
 
             return candidate;
@@ -135,7 +136,7 @@ namespace Interview_Calendar.Services
             //check if candidate has an interviewer associated
             if(candidate.InterviewerId == null)
             {
-                throw new Exception("No Interviewer yet");
+                throw new ValidationErrorException("There is no interviewer assinged to the candidate");
             }
 
             
@@ -143,7 +144,6 @@ namespace Interview_Calendar.Services
             //Add to interviwer and remove availability
             var added = await _interviewerService.ScheduleInterview(candidate.InterviewerId, candidateId, date);
 
-            Console.WriteLine("Lines added? " + added);
 
             var interview = new Interview
             {
