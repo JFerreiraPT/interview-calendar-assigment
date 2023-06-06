@@ -66,7 +66,7 @@ namespace Interview_Calendar.Services
             //find candidate
             var filter = Builders<Candidate>.Filter.And(
                 Builders<Candidate>.Filter.Eq<ObjectId>("_id", ObjectId.Parse(id)),
-                Builders<Candidate>.Filter.Eq("_t", typeof(Candidate).Name),
+                Builders<Candidate>.Filter.Eq("UserType", typeof(Candidate).Name),
                 Builders<Candidate>.Filter.Eq("isActive", true)
             );
 
