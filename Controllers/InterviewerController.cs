@@ -19,6 +19,12 @@ namespace Interview_Calendar.Controllers
         {
             this._interviewerService = interviewerService;
         }
+        [HttpGet("{id}")]
+        [Authorize]
+        public async Task<InterviewerResponseDTO> GetOne(string id)
+        {
+            return await _interviewerService.GetInterviewer(id);
+        }
 
 
         [HttpPost]
