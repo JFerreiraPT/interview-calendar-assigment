@@ -64,7 +64,7 @@ namespace Interview_Calendar.Services
             return jwt;
         }
 
-        public string Login(LoginDTO loginDTO)
+        public LoginResponseDTO Login(LoginDTO loginDTO)
         {
             //Find user existence
             var user =_userCollection.Find(x => x.Email == loginDTO.Email).FirstOrDefault();
@@ -78,7 +78,13 @@ namespace Interview_Calendar.Services
                 throw new InvalidCredentialsException("Invalid credentials");
             }
 
-            return GenerateToken(user);
+            return new LoginResponseDTO()
+            {
+                Token = GenerateToken(user),
+                Id = user.Id.ToString(),
+                Name = user.Name,
+                Email = user.Email                
+            };
         }
     }
 }

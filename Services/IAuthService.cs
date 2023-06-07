@@ -8,7 +8,7 @@ namespace Interview_Calendar.Services
 	{
 
         string GenerateToken(User user);
-        string Login(LoginDTO loginDTO);
+        LoginResponseDTO Login(LoginDTO loginDTO);
 
     }
 }
