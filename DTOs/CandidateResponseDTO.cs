@@ -1,9 +1,12 @@
 ﻿using System;
+using Interview_Calendar.Models.ValueObjects;
+
 namespace Interview_Calendar.DTOs
 {
 	public class CandidateResponseDTO : UserDTO
 	{
-        public DateTime interview = default!;
-	}
+        public Interview Interview = default!;
+        public string InterviewerId = default!;
+    }
 }
 

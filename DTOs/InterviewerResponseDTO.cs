@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Text.Json.Serialization;
+using Interview_Calendar.Models.ValueObjects;
 using Newtonsoft.Json;
 
 namespace Interview_Calendar.DTOs
@@ -7,10 +8,8 @@ namespace Interview_Calendar.DTOs
     public class InterviewerResponseDTO : UserDTO
 	{
 
-        [JsonPropertyName("availability")]
-        public Dictionary<string, SortedSet<int>> Availability = default!;
-        [JsonPropertyName("interviews")]
-        public List<DateTime> Interviews = default!;
+        public Dictionary<string, SortedSet<int>> Availability = new Dictionary<string, SortedSet<int>>();
+        public List<Interview> Interviews = new List<Interview>();
     }
 }
 
