@@ -37,15 +37,11 @@ namespace Interview_Calendar.Controllers
         [RequiresClaim(IdentityData.InterviewerUserPolicyName, "Interviewer")]
         public async Task<IActionResult> AddAvailability(string interviewerId, [FromBody] AvailabilityRequestDTO request)
         {
-            try
-            {
-                await _interviewerService.AddAvailability(interviewerId, request.Date, request.TimeSlots);
+            if(await _interviewerService.AddAvailability(interviewerId, request.Date, request.TimeSlots)) {
                 return Ok();
             }
-            catch (Exception ex)
-            {
-                return StatusCode(500, ex.Message);
-            }
+
+            return new BadRequestResult();
         }
 
         [HttpDelete("{interviewerId}/availability")]
@@ -53,15 +49,12 @@ namespace Interview_Calendar.Controllers
         [RequiresClaim(IdentityData.InterviewerUserPolicyName, "Interviewer")]
         public async Task<IActionResult> RemoveAvailability(string interviewerId, [FromBody] AvailabilityRequestDTO request)
         {
-            try
+            if(await _interviewerService.RemoveDayAvailability(interviewerId, request.Date))
             {
-                await _interviewerService.RemoveDayAvailability(interviewerId, request.Date);
                 return Ok();
             }
-            catch (Exception ex)
-            {
-                return StatusCode(500, ex.Message);
-            }
+
+            return new BadRequestResult();
         }
 
 

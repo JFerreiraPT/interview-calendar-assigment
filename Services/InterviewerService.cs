@@ -69,7 +69,7 @@ namespace Interview_Calendar.Services
         {
             var filter = Builders<User>.Filter.And(
                 Builders<User>.Filter.Eq<ObjectId>("_id", ObjectId.Parse(interviewerId)),
-                Builders<User>.Filter.Eq("UserType", typeof(Interviewer).Name),
+                Builders<User>.Filter.Eq("_t", typeof(Interviewer).Name),
                 Builders<User>.Filter.Eq("isActive", true)
             );
 
@@ -92,13 +92,14 @@ namespace Interview_Calendar.Services
             //If date dont exist yet create new sorted list, otherwise update
             var filter = Builders<User>.Filter.And(
                 Builders<User>.Filter.Eq<ObjectId>("_id", ObjectId.Parse(interviewerId)),
-                Builders<User>.Filter.Eq("_id", typeof(Interviewer).Name),
+                Builders<User>.Filter.Eq("_t", typeof(Interviewer).Name),
                 Builders<User>.Filter.Eq("isActive", true)
             );
 
             var update = Builders<User>.Update.Set($"Availability.{date}", new SortedSet<int>(timeSlots));
 
             var result = await _userCollection.UpdateOneAsync(filter, update);
+
             return result.ModifiedCount > 0;
         }
 
@@ -106,7 +107,7 @@ namespace Interview_Calendar.Services
         {
             var filter = Builders<User>.Filter.And(
                 Builders<User>.Filter.Eq<ObjectId>("_id", ObjectId.Parse(interviewerId)),
-                Builders<User>.Filter.Eq<string>("_id", typeof(Interviewer).Name),
+                Builders<User>.Filter.Eq<string>("_t", typeof(Interviewer).Name),
                 Builders<User>.Filter.Eq("isActive", true)
             );
 
@@ -136,7 +137,7 @@ namespace Interview_Calendar.Services
             // Build the query to find the document with the specified date and the availability containing the interview hour
             var filter = Builders<User>.Filter.And(
                 Builders<User>.Filter.Eq("_id", new ObjectId(interviewerId)),
-                Builders<User>.Filter.Eq("_id", typeof(Interviewer).Name),
+                Builders<User>.Filter.Eq("_t", typeof(Interviewer).Name),
                 Builders<User>.Filter.Eq("isActive", true),
                 Builders<User>.Filter.Eq($"Availability.{dateString}", new BsonDocument("$in", new BsonArray { interviewHour }))
             );
