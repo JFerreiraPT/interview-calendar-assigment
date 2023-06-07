@@ -14,7 +14,7 @@ namespace Interview_Calendar.Services
 {
     public class CandidateService : ICandidateService
     {
-        private readonly IMongoCollection<Candidate> _userCollection;
+        private readonly IMongoCollection<User> _userCollection;
         private readonly IMapper _mapper;
         private readonly PasswordHasher _passwordHasher;
         private readonly IInterviewerService _interviewerService;
@@ -29,11 +29,11 @@ namespace Interview_Calendar.Services
             _interviewerService = interviewerService;
             var mongoClient = new MongoClient(userConfiguration.Value.ConnectionString);
             var userDatabase = mongoClient.GetDatabase(userConfiguration.Value.DatabaseName);
-            _userCollection = userDatabase.GetCollection<Candidate>(userConfiguration.Value.UserCollectionName);
+            _userCollection = userDatabase.GetCollection<User>(userConfiguration.Value.UserCollectionName);
 
 
             _addUserService = new AddUserService<Candidate, UserCreateDTO, CandidateResponseDTO>(
-                userDatabase.GetCollection<User>(userConfiguration.Value.UserCollectionName),
+                _userCollection,
                 _mapper,
                 _passwordHasher);
         }
@@ -64,23 +64,16 @@ namespace Interview_Calendar.Services
         public async Task<bool> AssignInterviewer(string id, AddInterviewerDTO interviwer)
         {
             //find candidate
-            var filter = Builders<Candidate>.Filter.And(
-                Builders<Candidate>.Filter.Eq<ObjectId>("_id", ObjectId.Parse(id)),
-                Builders<Candidate>.Filter.Eq("_t", typeof(Candidate).Name),
-                Builders<Candidate>.Filter.Eq("isActive", true)
+            var filter = Builders<User>.Filter.And(
+                Builders<User>.Filter.Eq<ObjectId>("_id", ObjectId.Parse(id)),
+                Builders<User>.Filter.Eq("_t", typeof(Candidate).Name),
+                Builders<User>.Filter.Eq("isActive", true)
             );
 
-            var candidate = _userCollection.Find(filter).FirstOrDefault();
+            var candidate = FindOrFail(id);
 
-            if (candidate == null)
-            {
-                throw new NotFoundException("Candidate Not Found");
-            }
-
-            if (_interviewerService.FindOrFail(interviwer.interviewerId) == null)
-            {
-                throw new NotFoundException("Interviewer Not Found");
-            }
+            _interviewerService.FindOrFail(interviwer.interviewerId);
+   
 
             //Add
             candidate.InterviewerId = interviwer.interviewerId;
@@ -98,10 +91,10 @@ namespace Interview_Calendar.Services
 
         public async Task<CandidateResponseDTO> GetCandidate(string candidateId)
         {
-            var filter = Builders<Candidate>.Filter.And(
-                Builders<Candidate>.Filter.Eq<ObjectId>("_id", ObjectId.Parse(candidateId)),
-                Builders<Candidate>.Filter.Eq("_t", typeof(Candidate).Name),
-                Builders<Candidate>.Filter.Eq("isActive", true)
+            var filter = Builders<User>.Filter.And(
+                Builders<User>.Filter.Eq<ObjectId>("_id", ObjectId.Parse(candidateId)),
+                Builders<User>.Filter.Eq("_t", typeof(Candidate).Name),
+                Builders<User>.Filter.Eq("isActive", true)
             );
 
             var candidate = await _userCollection.FindAsync(filter);
@@ -112,13 +105,14 @@ namespace Interview_Calendar.Services
 
         public Candidate FindOrFail(string candidateId)
         {
-            var filter = Builders<Candidate>.Filter.And(
-                Builders<Candidate>.Filter.Eq<ObjectId>("_id", ObjectId.Parse(candidateId)),
-                Builders<Candidate>.Filter.Eq("_t", typeof(Candidate).Name),
-                Builders<Candidate>.Filter.Eq("isActive", true)
+            var filter = Builders<User>.Filter.And(
+                Builders<User>.Filter.Eq<ObjectId>("_id", ObjectId.Parse(candidateId)),
+                Builders<User>.Filter.Eq("_t", typeof(Candidate).Name),
+                Builders<User>.Filter.Eq("isActive", true)
             );
 
-            var candidate = _userCollection.Find(filter).FirstOrDefault();
+
+            var candidate = (Candidate)_userCollection.Find(filter).FirstOrDefault();
 
             if(candidate == null)
             {
@@ -136,14 +130,15 @@ namespace Interview_Calendar.Services
             //check if candidate has an interviewer associated
             if(candidate.InterviewerId == null)
             {
-                throw new ValidationErrorException("There is no interviewer assinged to the candidate");
+                throw new ValidationErrorException("Not interviewer assigned yet");
             }
 
             
 
             //Add to interviwer and remove availability
-            var added = await _interviewerService.ScheduleInterview(candidate.InterviewerId, candidateId, date);
+            await _interviewerService.ScheduleInterview(candidate.InterviewerId, candidateId, date);
 
+            
 
             var interview = new Interview
             {
@@ -157,7 +152,7 @@ namespace Interview_Calendar.Services
 
             // Save the changes to the interviewer document in the database
             var updateResult = await _userCollection.ReplaceOneAsync(
-                Builders<Candidate>.Filter.Eq<ObjectId>("_id", ObjectId.Parse(candidateId)),
+                Builders<User>.Filter.Eq<ObjectId>("_id", ObjectId.Parse(candidateId)),
                 candidate);
 
             // Check if the update was successful

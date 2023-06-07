@@ -29,7 +29,7 @@ namespace Interview_Calendar.Controllers
         }
 
 
-        [HttpPatch("/{id}/interviewer")]
+        [HttpPatch("{id}/interviewer")]
         [Authorize]
         [RequiresClaim(IdentityData.InterviewerUserPolicyName, "Interviewer")]
         public async Task<IActionResult> AssignInterviwer(string id, AddInterviewerDTO interviwer)
@@ -38,7 +38,7 @@ namespace Interview_Calendar.Controllers
             return Ok();
         }
 
-        [HttpPost("/{id}/interview")]
+        [HttpPost("{id}/interview")]
         [Authorize]
         [RequiresClaim(IdentityData.CandidateUserPolicyName, "Candidate")]
         public async Task<IActionResult> AddInterview(string id, InterviewDTO interview)

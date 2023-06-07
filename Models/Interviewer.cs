@@ -7,7 +7,7 @@ namespace Interview_Calendar.Models
 {
 	public class Interviewer : User
 	{
-        [BsonDictionaryOptions(DictionaryRepresentation.ArrayOfArrays)]
+        //[BsonDictionaryOptions(DictionaryRepresentation.ArrayOfArrays)]
         public Dictionary<string, SortedSet<int>> Availability = new Dictionary<string, SortedSet<int>>();
         public List<Interview> Interviews = new List<Interview>();
 	}

@@ -29,7 +29,7 @@ namespace Interview_Calendar.Filters
             else
             {
                 context.HttpContext.Response.StatusCode = 500;
-                context.Result = new JsonResult(new Error { StatusCode = 500, Message = "Internal Server Error" });
+                context.Result = new JsonResult(new Error { StatusCode = 500, Message = /*"Internal Server Error"*/context.Exception.Message });
             }
 
 
