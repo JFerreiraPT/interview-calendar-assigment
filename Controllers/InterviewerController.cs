@@ -60,7 +60,6 @@ namespace Interview_Calendar.Controllers
 
         [HttpGet("{interviewerId}/availability")]
         [Authorize]
-        [RequiresClaim(IdentityData.InterviewerUserPolicyName, "Interviewer")]
         public IActionResult GetInterviewersWithSchedulesBetweenDates(string interviewerId, DateOnly startDate, DateOnly endDate)
         {
             // If no startDate is provided, set it to one day less than endDate or today's date
