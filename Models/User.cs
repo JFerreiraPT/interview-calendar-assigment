@@ -5,7 +5,9 @@ using MongoDB.Bson.Serialization.Attributes;
 
 namespace Interview_Calendar.Models
 {
-	public abstract class User : BaseEntity
+    //Not very dynamic but was the best way i could find to avoid Asbtract class initialization instead of the concrete one
+    [BsonKnownTypes(typeof(Candidate), typeof(Interviewer))]
+    public abstract class User : BaseEntity
 	{
         [BsonRequired]
         public string Name { get; set; } = default!;

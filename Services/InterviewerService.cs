@@ -225,12 +225,13 @@ namespace Interview_Calendar.Services
             interviewer.Interviews.Add(interview);
 
 
-
             // Save the changes to the interviewer document in the database
             var updateResult = await _userCollection.ReplaceOneAsync(
                 Builders<User>.Filter.Eq<ObjectId>("_id", ObjectId.Parse(interviewerId)),
                 interviewer,
                 new ReplaceOptions { IsUpsert = false });
+
+
 
             // Check if the update was successful
             return updateResult.ModifiedCount > 0;

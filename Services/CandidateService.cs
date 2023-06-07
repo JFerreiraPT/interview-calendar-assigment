@@ -70,17 +70,10 @@ namespace Interview_Calendar.Services
                 Builders<User>.Filter.Eq("isActive", true)
             );
 
-            var candidate = (Candidate)_userCollection.Find(filter).FirstOrDefault();
+            var candidate = FindOrFail(id);
 
-            if (candidate == null)
-            {
-                throw new NotFoundException("Candidate Not Found");
-            }
-
-            if (_interviewerService.FindOrFail(interviwer.interviewerId) == null)
-            {
-                throw new NotFoundException("Interviewer Not Found");
-            }
+            _interviewerService.FindOrFail(interviwer.interviewerId);
+   
 
             //Add
             candidate.InterviewerId = interviwer.interviewerId;
@@ -118,6 +111,7 @@ namespace Interview_Calendar.Services
                 Builders<User>.Filter.Eq("isActive", true)
             );
 
+
             var candidate = (Candidate)_userCollection.Find(filter).FirstOrDefault();
 
             if(candidate == null)
@@ -142,8 +136,9 @@ namespace Interview_Calendar.Services
             
 
             //Add to interviwer and remove availability
-            var added = await _interviewerService.ScheduleInterview(candidate.InterviewerId, candidateId, date);
+            await _interviewerService.ScheduleInterview(candidate.InterviewerId, candidateId, date);
 
+            
 
             var interview = new Interview
             {
