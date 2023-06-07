@@ -11,12 +11,19 @@ namespace Interview_Calendar.Controllers
     [ApiController]
     [Route("api/[controller]s")]
     public class CandidateController : ControllerBase
-	{
+    {
         private readonly ICandidateService _candidateService;
 
         public CandidateController(ICandidateService candidateService)
         {
             _candidateService = candidateService;
+        }
+
+        [HttpGet("{id}")]
+        [Authorize]
+        public async Task<CandidateResponseDTO> GetOne(string id)
+        {
+            return await _candidateService.GetCandidate(id);
         }
 
         [HttpPost]

@@ -91,13 +91,8 @@ namespace Interview_Calendar.Services
 
         public async Task<CandidateResponseDTO> GetCandidate(string candidateId)
         {
-            var filter = Builders<User>.Filter.And(
-                Builders<User>.Filter.Eq<ObjectId>("_id", ObjectId.Parse(candidateId)),
-                Builders<User>.Filter.Eq("_t", typeof(Candidate).Name),
-                Builders<User>.Filter.Eq("isActive", true)
-            );
 
-            var candidate = await _userCollection.FindAsync(filter);
+            var candidate = FindOrFail(candidateId);
 
 
             return _mapper.Map<CandidateResponseDTO>(candidate);
