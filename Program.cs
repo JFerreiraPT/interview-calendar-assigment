@@ -10,110 +10,88 @@ using Microsoft.IdentityModel.Tokens;
 using MongoDB.Bson.Serialization;
 using MongoDB.Bson.Serialization.Options;
 
-var builder = WebApplication.CreateBuilder(args);
-
-// Add services to the container.
-builder.Services.AddControllers().AddJsonOptions(options =>
+public static class Program
 {
-    options.JsonSerializerOptions.PropertyNamingPolicy = null;
-    options.JsonSerializerOptions.DictionaryKeyPolicy = null;
-});
-
-builder.Services.AddControllers(c =>
-{
-    c.Filters.Add<InterviewCalendarExceptionFilter>();
-}
-).AddNewtonsoftJson();
-
-//Configure Database Connection
-builder.Services.Configure<UserDbConfiguration>(
-        builder.Configuration.GetSection("InterviewCalendarDb")
-    );
-
-
-
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
-
-//Configure mapper
-builder.Services.AddAutoMapper(typeof(MappingProfile));
-
-//Add Services and Helpers
-//Add singleton to Injection
-builder.Services.AddSingleton<IInterviewerService, InterviewerService>();
-builder.Services.AddSingleton<ICandidateService, CandidateService>();
-builder.Services.AddSingleton<IAuthService, AuthService>();
-builder.Services.AddSingleton(typeof(AddUserService<,,>));
-
-builder.Services.AddSingleton<PasswordHasher>();
-
-var config = builder.Configuration;
-
-//Add JWt support
-builder.Services.AddAuthentication(x =>
-{
-    x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-    x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-    x.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
-}).AddJwtBearer(x =>
-{
-    x.TokenValidationParameters = new TokenValidationParameters
+    public static void Main(string[] args)
     {
-        ValidIssuer = config["JwtSettings:Issuer"],
-        ValidAudience = config["JwtSettings:Audience"],
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(
-            config["JwtSettings:Key"]!
-            )),
-        ValidateIssuer = true,
-        ValidateAudience = true,
-        ValidateLifetime = true,
-        ValidateIssuerSigningKey = true
-    };
-});
-
-//Add policies
-builder.Services.AddAuthorization(
-    options =>
-    {
-        options.AddPolicy(IdentityData.InterviewerUserClaim, p =>
-        p.RequireClaim(IdentityData.InterviewerUserPolicyName, "true")
-        );
-        options.AddPolicy(IdentityData.CandidateUserClaim, p =>
-        p.RequireClaim(IdentityData.CandidateUserPolicyName, "true")
-        );
-
+        var builder = WebApplication.CreateBuilder(args);
+        builder.ConfigureServices();
+        var app = builder.Build();
+        app.Configure();
+        app.Run();
     }
-    );
+
+    //Use Extension methods to initialize Services
+    private static void ConfigureServices(this WebApplicationBuilder builder)
+    {
+        builder.Services.AddControllers().AddJsonOptions(options =>
+        {
+            options.JsonSerializerOptions.PropertyNamingPolicy = null;
+            options.JsonSerializerOptions.DictionaryKeyPolicy = null;
+        }).AddNewtonsoftJson();
+
+        builder.Services.AddControllers(c =>
+        {
+            c.Filters.Add<InterviewCalendarExceptionFilter>();
+        }).AddNewtonsoftJson();
+
+        builder.Services.Configure<UserDbConfiguration>(builder.Configuration.GetSection("InterviewCalendarDb"));
+
+        builder.Services.AddEndpointsApiExplorer();
+        builder.Services.AddSwaggerGen();
+
+        builder.Services.AddAutoMapper(typeof(MappingProfile));
+
+        builder.Services.AddSingleton<IInterviewerService, InterviewerService>();
+        builder.Services.AddSingleton<ICandidateService, CandidateService>();
+        builder.Services.AddSingleton<IAuthService, AuthService>();
+        builder.Services.AddSingleton(typeof(AddUserService<,,>));
+        builder.Services.AddSingleton<PasswordHasher>();
 
 
-var app = builder.Build();
 
+        var config = builder.Configuration;
 
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
+        builder.Services.AddAuthentication(x =>
+        {
+            x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+            x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            x.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+        }).AddJwtBearer(x =>
+        {
+            x.TokenValidationParameters = new TokenValidationParameters
+            {
+                ValidIssuer = config["JwtSettings:Issuer"],
+                ValidAudience = config["JwtSettings:Audience"],
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["JwtSettings:Key"]!)),
+                ValidateIssuer = true,
+                ValidateAudience = true,
+                ValidateLifetime = true,
+                ValidateIssuerSigningKey = true
+            };
+        });
+
+        builder.Services.AddAuthorization(options =>
+        {
+            options.AddPolicy(IdentityData.InterviewerUserClaim, p =>
+                p.RequireClaim(IdentityData.InterviewerUserPolicyName, "true")
+            );
+            options.AddPolicy(IdentityData.CandidateUserClaim, p =>
+                p.RequireClaim(IdentityData.CandidateUserPolicyName, "true")
+            );
+        });
+    }
+
+    private static void Configure(this WebApplication app)
+    {
+        if (app.Environment.IsDevelopment())
+        {
+            app.UseSwagger();
+            app.UseSwaggerUI();
+        }
+
+        app.UseHttpsRedirection();
+        app.UseAuthorization();
+        app.MapControllers();
+    }
 }
-
-//We need this to serialize Availability property in order to be able to seacrh for it
-//BsonClassMap.RegisterClassMap<Interviewer>(cm =>
-//{
-//    cm.AutoMap();
-//    var memberMap = cm.GetMemberMap(x => x.Availability);
-//    var serializer = memberMap.GetSerializer();
-//    if (serializer is IDictionaryRepresentationConfigurable dictionaryRepresentationSerializer)
-//        serializer = dictionaryRepresentationSerializer.WithDictionaryRepresentation(DictionaryRepresentation.ArrayOfDocuments);
-//    memberMap.SetSerializer(serializer);
-//});
-
-
-
-app.UseHttpsRedirection();
-
-app.UseAuthorization();
-
-app.MapControllers();
-
-app.Run();
