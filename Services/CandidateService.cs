@@ -70,6 +70,11 @@ namespace Interview_Calendar.Services
 
             var candidate = FindOrFail(id);
 
+            if(candidate.InterviewerId != null)
+            {
+                throw new ValidationErrorException("there is already one interviwer assigned to candidate");
+            }
+
             _interviewerService.FindOrFail(interviewer.interviewerId);
    
 
@@ -120,13 +125,18 @@ namespace Interview_Calendar.Services
             //check if interviewer exists
             var candidate = FindOrFail(candidateId);
 
-            //check if candidate has an interviewer associated
-            if(candidate.InterviewerId == null)
+            if (candidate.Interview != null)
             {
-                throw new ValidationErrorException("Not interviewer assigned yet");
+                throw new ValidationErrorException("Interview already schedulled");
             }
 
-            
+            //check if candidate has an interviewer associated
+            if (candidate.InterviewerId == null)
+            {
+                throw new ValidationErrorException("No interviewer assigned yet");
+            }
+
+                        
 
             //Add to interviewer and remove availability
             await _interviewerService.ScheduleInterview(candidate.InterviewerId, candidateId, date);
