@@ -25,8 +25,11 @@ namespace Interview_Calendar.Services
 
         private readonly AddUserService<Interviewer, UserCreateDTO, InterviewerResponseDTO> _addUserService;
 
-        public InterviewerService(IOptions<UserDbConfiguration> userConfiguration, IMapper mapper,
-            PasswordHasher hasher)
+        public InterviewerService(IOptions<UserDbConfiguration> userConfiguration,
+            IMapper mapper,
+            PasswordHasher hasher,
+            AddUserService<Interviewer, UserCreateDTO, InterviewerResponseDTO> addUserService
+            )
         {
             _mapper = mapper;
             _passwordHasher = hasher;
@@ -34,10 +37,7 @@ namespace Interview_Calendar.Services
             var userDatabase = mongoClient.GetDatabase(userConfiguration.Value.DatabaseName);
             _userCollection = userDatabase.GetCollection<User>(userConfiguration.Value.UserCollectionName);
 
-            _addUserService = new AddUserService<Interviewer, UserCreateDTO, InterviewerResponseDTO>(
-                _userCollection,
-                _mapper,
-                _passwordHasher);
+            _addUserService = addUserService;
         }
 
         public Interviewer PreCreateUserAsync(UserCreateDTO dto)

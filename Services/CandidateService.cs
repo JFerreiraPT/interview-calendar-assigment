@@ -21,8 +21,11 @@ namespace Interview_Calendar.Services
 
         private readonly AddUserService<Candidate, UserCreateDTO, CandidateResponseDTO> _addUserService;
 
-        public CandidateService(IOptions<UserDbConfiguration> userConfiguration, IMapper mapper, PasswordHasher hasher,
-            IInterviewerService interviewerService)
+        public CandidateService(IOptions<UserDbConfiguration> userConfiguration,
+            IMapper mapper,
+            PasswordHasher hasher,
+            IInterviewerService interviewerService,
+            AddUserService<Candidate, UserCreateDTO, CandidateResponseDTO> addUserService)
         {
             _mapper = mapper;
             _passwordHasher = hasher;
@@ -32,10 +35,7 @@ namespace Interview_Calendar.Services
             _userCollection = userDatabase.GetCollection<User>(userConfiguration.Value.UserCollectionName);
 
 
-            _addUserService = new AddUserService<Candidate, UserCreateDTO, CandidateResponseDTO>(
-                _userCollection,
-                _mapper,
-                _passwordHasher);
+            _addUserService = addUserService;
         }
 
 

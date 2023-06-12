@@ -44,6 +44,8 @@ builder.Services.AddAutoMapper(typeof(MappingProfile));
 builder.Services.AddSingleton<IInterviewerService, InterviewerService>();
 builder.Services.AddSingleton<ICandidateService, CandidateService>();
 builder.Services.AddSingleton<IAuthService, AuthService>();
+builder.Services.AddSingleton(typeof(AddUserService<,,>));
+
 builder.Services.AddSingleton<PasswordHasher>();
 
 var config = builder.Configuration;
