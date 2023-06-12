@@ -77,7 +77,7 @@ namespace Interview_Calendar.Services
 
             if(interviewer == null)
             {
-                throw new NotFoundException("Interviwer Not Found");
+                throw new NotFoundException("Interviewer Not Found");
             }
 
             return interviewer;
@@ -128,7 +128,7 @@ namespace Interview_Calendar.Services
             return _mapper.Map<InterviewerResponseDTO>(interviewer);
         }
 
-        private async Task<bool> IsInterviwerAvailable(string interviewerId, DateTime interviewTime)
+        private async Task<bool> IsInterviewerAvailable(string interviewerId, DateTime interviewTime)
         {
 
             string dateString = interviewTime.ToString("MM/dd/yyyy");
@@ -149,13 +149,13 @@ namespace Interview_Calendar.Services
 
         }
 
-        private async Task<bool> CheckIfInterviwerAvailableAndRemove(Interviewer interviwer, DateTime interviewTime)
+        private async Task<bool> CheckIfInterviewerAvailableAndRemove(Interviewer interviewer, DateTime interviewTime)
         {
 
             string dateString = interviewTime.ToString("MM/dd/yyyy");
             int interviewHour = interviewTime.Hour;
 
-            if (interviwer.Availability.TryGetValue(dateString, out SortedSet<int> availableHours))
+            if (interviewer.Availability.TryGetValue(dateString, out SortedSet<int> availableHours))
             {
                 bool isAvailable = availableHours.Contains(interviewHour);
                 if (isAvailable)
@@ -166,7 +166,7 @@ namespace Interview_Calendar.Services
                     // If no more available hours exist for the date, remove it from the dictionary
                     if (availableHours.Count == 0)
                     {
-                        interviwer.Availability.Remove(dateString);
+                        interviewer.Availability.Remove(dateString);
                     }
 
                     return true;
@@ -207,9 +207,9 @@ namespace Interview_Calendar.Services
             var interviewer = FindOrFail(interviewerId);
 
             //Check for availability
-            if(!(await this.CheckIfInterviwerAvailableAndRemove(interviewer, date)))
+            if(!(await this.CheckIfInterviewerAvailableAndRemove(interviewer, date)))
             {
-                throw new ValidationErrorException("Interviwer not available");
+                throw new ValidationErrorException("Interviewer not available");
             }
 
             var interview = new Interview

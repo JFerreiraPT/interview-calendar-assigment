@@ -1,12 +1,14 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
+using Interview_Calendar.Helpers;
 
 namespace Interview_Calendar.DTOs
 {
 	public class InterviewDTO
 	{
         [Required]
-        public DateTime date;
+        [ValidateScheduleTime]             
+        public DateTime date { get; set;}
     }
 }
 
