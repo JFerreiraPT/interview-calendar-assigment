@@ -40,17 +40,17 @@ namespace Interview_Calendar.Services
             _addUserService = addUserService;
         }
 
-        public Interviewer PreCreateUserAsync(UserCreateDTO dto)
+        public async Task<Interviewer> PreCreateUserAsync(UserCreateDTO dto)
         {
             //Transform DTO in entity with map helper + validations if needed
 
-            return _addUserService.PreCreateUserAsync(dto);
+            return await _addUserService.PreCreateUserAsync(dto);
         }
 
         public async Task<InterviewerResponseDTO> CreateUserAsync(UserCreateDTO dto)
         {
 
-            var user = PreCreateUserAsync(dto);
+            var user = await PreCreateUserAsync(dto);
 
             var entity = await _addUserService.CreateUserAsync(user, UserType.Interviewer);
 

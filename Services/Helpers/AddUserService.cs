@@ -35,10 +35,10 @@ namespace Interview_Calendar.Services
             _userCollection = userDatabase.GetCollection<User>(userConfiguration.Value.UserCollectionName);
         }
 
-        public T PreCreateUserAsync(DI dto)
+        public async Task<T> PreCreateUserAsync(DI dto)
         {
             //Validate if there is any user with this email
-            var userExists = _userCollection.Find(x => x.Email == dto.Email).Any();
+            var userExists = await _userCollection.Find(x => x.Email == dto.Email).AnyAsync();
 
             if (userExists)
             {

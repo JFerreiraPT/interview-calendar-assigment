@@ -16,19 +16,17 @@ namespace Interview_Calendar.Services
     {
         private readonly IMongoCollection<User> _userCollection;
         private readonly IMapper _mapper;
-        private readonly PasswordHasher _passwordHasher;
+
         private readonly IInterviewerService _interviewerService;
 
         private readonly AddUserService<Candidate, UserCreateDTO, CandidateResponseDTO> _addUserService;
 
         public CandidateService(IOptions<UserDbConfiguration> userConfiguration,
             IMapper mapper,
-            PasswordHasher hasher,
             IInterviewerService interviewerService,
             AddUserService<Candidate, UserCreateDTO, CandidateResponseDTO> addUserService)
         {
             _mapper = mapper;
-            _passwordHasher = hasher;
             _interviewerService = interviewerService;
             var mongoClient = new MongoClient(userConfiguration.Value.ConnectionString);
             var userDatabase = mongoClient.GetDatabase(userConfiguration.Value.DatabaseName);
@@ -39,16 +37,16 @@ namespace Interview_Calendar.Services
         }
 
 
-        public Candidate PreCreateUserAsync(UserCreateDTO dto)
+        public async Task<Candidate> PreCreateUserAsync(UserCreateDTO dto)
         {
 
-            return _addUserService.PreCreateUserAsync(dto);
+            return await _addUserService.PreCreateUserAsync(dto);
 
         }
         public async Task<CandidateResponseDTO> CreateUserAsync(UserCreateDTO dto)
         {
             //add to db context
-            var user = PreCreateUserAsync(dto);
+            var user = await PreCreateUserAsync(dto);
 
             var entity = await _addUserService.CreateUserAsync(user, UserType.Candidate);
 
@@ -61,7 +59,7 @@ namespace Interview_Calendar.Services
             return _addUserService.PostCreateUserAsync(entity);
         }
 
-        public async Task<bool> AssignInterviewer(string id, AddInterviewerDTO interviwer)
+        public async Task<bool> AssignInterviewer(string id, AddInterviewerDTO interviewer)
         {
             //find candidate
             var filter = Builders<User>.Filter.And(
@@ -72,11 +70,11 @@ namespace Interview_Calendar.Services
 
             var candidate = FindOrFail(id);
 
-            _interviewerService.FindOrFail(interviwer.interviewerId);
+            _interviewerService.FindOrFail(interviewer.interviewerId);
    
 
             //Add
-            candidate.InterviewerId = interviwer.interviewerId;
+            candidate.InterviewerId = interviewer.interviewerId;
 
             var updateResult = await _userCollection.ReplaceOneAsync(
                 filter,
@@ -130,7 +128,7 @@ namespace Interview_Calendar.Services
 
             
 
-            //Add to interviwer and remove availability
+            //Add to interviewer and remove availability
             await _interviewerService.ScheduleInterview(candidate.InterviewerId, candidateId, date);
 
             
