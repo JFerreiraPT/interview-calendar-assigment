@@ -1,0 +1,336 @@
+{
+	"info": {
+		"_postman_id": "52909937-55fe-4ee0-b6fb-f7c6d91cb589",
+		"name": "Interview-Calendar",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Candidate",
+			"item": [
+				{
+					"name": "Create",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Candidate 1\",\n    \"email\": \"123@mail.pt\",\n    \"password\": \"12345678\"\n\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/Candidates",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"Candidates"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "set interviwer",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"interviewerId\": \"647f5ec33831b9b80e11dc33\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/Candidates/647f5f8b3831b9b80e11dc34/interviewer",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"Candidates",
+								"647f5f8b3831b9b80e11dc34",
+								"interviewer"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Add Interview",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"date\" : \"2024-05-09T16:50:50\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/Candidates/647f5f8b3831b9b80e11dc34/interview",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"Candidates",
+								"647f5f8b3831b9b80e11dc34",
+								"interview"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get One",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Interviwer",
+			"item": [
+				{
+					"name": "Create",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Interviwer 1\",\n    \"email\": \"123@kigroup.de\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/Interviwers",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"Interviwers"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Set Availability",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"date\": \"2023-06-09\",\n    \"timeSlots\": [10,14,16,18,11]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/Interviewers/64804a450b411176b46d8d76/availability",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"Interviewers",
+								"64804a450b411176b46d8d76",
+								"availability"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "delete",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"date\": \"2023-06-09\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/Interviewers/64804a450b411176b46d8d76/availability",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"Interviewers",
+								"64804a450b411176b46d8d76",
+								"availability"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/Interviewers/64804d0c3a34b52989c806db/availability?startDate=2021-05-09&endDate=2030-05-09",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"Interviewers",
+								"64804d0c3a34b52989c806db",
+								"availability"
+							],
+							"query": [
+								{
+									"key": "startDate",
+									"value": "2021-05-09"
+								},
+								{
+									"key": "endDate",
+									"value": "2030-05-09"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get One",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Auth",
+			"item": [
+				{
+					"name": "Login Inter",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"123@kigroup.de\",\n    \"password\": \"12345678\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/Auth",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"Auth"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Login Candidate",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"123@mail.pt\",\n    \"password\": \"12345678\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/Auth",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"Auth"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{Token}}",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:8080",
+			"type": "string"
+		},
+		{
+			"key": "Token",
+			"value": "eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJiN2IxYWQzYi01YzI5LTQ2ODUtODcyNi0xMDc1NjNkZjUzOWQiLCJzdWIiOiJJbnRlcnZpd2VyIDEiLCJlbWFpbCI6IjEyM0BraWdyb3VwLmRlIiwidXNlcmlkIjoiNjQ3ZjVlYzMzODMxYjliODBlMTFkYzMzIiwidXNlclR5cGUiOiJJbnRlcnZpZXdlciIsIm5iZiI6MTY4NjA2OTAzNywiZXhwIjoxNjg2MDk3ODM3LCJpYXQiOjE2ODYwNjkwMzcsImlzcyI6Imh0dHBzOi8vaW50ZXJ2aWV3LWNhbGVuZGFyLWFwaS5jb20iLCJhdWQiOiJodHRwczovL2ludGVydmlldy1jYWxlbmRhci11aS5jb20ifQ.vprI7mkRt6AA_YvUvJxSmS7xWxw3KIsBRZEitEbWqcJyPCUvccc0XGopO7CF9grd_mahRUN73bqfv8Ky5OHwUQ",
+			"type": "default"
+		}
+	]
+}
