@@ -25,8 +25,11 @@ namespace Interview_Calendar.Services
 
         private readonly AddUserService<Interviewer, UserCreateDTO, InterviewerResponseDTO> _addUserService;
 
-        public InterviewerService(IOptions<UserDbConfiguration> userConfiguration, IMapper mapper,
-            PasswordHasher hasher)
+        public InterviewerService(IOptions<UserDbConfiguration> userConfiguration,
+            IMapper mapper,
+            PasswordHasher hasher,
+            AddUserService<Interviewer, UserCreateDTO, InterviewerResponseDTO> addUserService
+            )
         {
             _mapper = mapper;
             _passwordHasher = hasher;
@@ -34,23 +37,20 @@ namespace Interview_Calendar.Services
             var userDatabase = mongoClient.GetDatabase(userConfiguration.Value.DatabaseName);
             _userCollection = userDatabase.GetCollection<User>(userConfiguration.Value.UserCollectionName);
 
-            _addUserService = new AddUserService<Interviewer, UserCreateDTO, InterviewerResponseDTO>(
-                _userCollection,
-                _mapper,
-                _passwordHasher);
+            _addUserService = addUserService;
         }
 
-        public Interviewer PreCreateUserAsync(UserCreateDTO dto)
+        public async Task<Interviewer> PreCreateUserAsync(UserCreateDTO dto)
         {
             //Transform DTO in entity with map helper + validations if needed
 
-            return _addUserService.PreCreateUserAsync(dto);
+            return await _addUserService.PreCreateUserAsync(dto);
         }
 
         public async Task<InterviewerResponseDTO> CreateUserAsync(UserCreateDTO dto)
         {
 
-            var user = PreCreateUserAsync(dto);
+            var user = await PreCreateUserAsync(dto);
 
             var entity = await _addUserService.CreateUserAsync(user, UserType.Interviewer);
 
@@ -77,7 +77,7 @@ namespace Interview_Calendar.Services
 
             if(interviewer == null)
             {
-                throw new NotFoundException("Interviwer Not Found");
+                throw new NotFoundException("Interviewer Not Found");
             }
 
             return interviewer;
@@ -128,7 +128,7 @@ namespace Interview_Calendar.Services
             return _mapper.Map<InterviewerResponseDTO>(interviewer);
         }
 
-        private async Task<bool> IsInterviwerAvailable(string interviewerId, DateTime interviewTime)
+        private async Task<bool> IsInterviewerAvailable(string interviewerId, DateTime interviewTime)
         {
 
             string dateString = interviewTime.ToString("MM/dd/yyyy");
@@ -149,13 +149,13 @@ namespace Interview_Calendar.Services
 
         }
 
-        private async Task<bool> CheckIfInterviwerAvailableAndRemove(Interviewer interviwer, DateTime interviewTime)
+        private async Task<bool> CheckIfInterviewerAvailableAndRemove(Interviewer interviewer, DateTime interviewTime)
         {
 
             string dateString = interviewTime.ToString("MM/dd/yyyy");
             int interviewHour = interviewTime.Hour;
 
-            if (interviwer.Availability.TryGetValue(dateString, out SortedSet<int> availableHours))
+            if (interviewer.Availability.TryGetValue(dateString, out SortedSet<int> availableHours))
             {
                 bool isAvailable = availableHours.Contains(interviewHour);
                 if (isAvailable)
@@ -166,7 +166,7 @@ namespace Interview_Calendar.Services
                     // If no more available hours exist for the date, remove it from the dictionary
                     if (availableHours.Count == 0)
                     {
-                        interviwer.Availability.Remove(dateString);
+                        interviewer.Availability.Remove(dateString);
                     }
 
                     return true;
@@ -207,9 +207,9 @@ namespace Interview_Calendar.Services
             var interviewer = FindOrFail(interviewerId);
 
             //Check for availability
-            if(!(await this.CheckIfInterviwerAvailableAndRemove(interviewer, date)))
+            if(!(await this.CheckIfInterviewerAvailableAndRemove(interviewer, date)))
             {
-                throw new ValidationErrorException("Interviwer not available");
+                throw new ValidationErrorException("Interviewer not available");
             }
 
             var interview = new Interview

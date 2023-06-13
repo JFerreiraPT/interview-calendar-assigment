@@ -16,39 +16,37 @@ namespace Interview_Calendar.Services
     {
         private readonly IMongoCollection<User> _userCollection;
         private readonly IMapper _mapper;
-        private readonly PasswordHasher _passwordHasher;
+
         private readonly IInterviewerService _interviewerService;
 
         private readonly AddUserService<Candidate, UserCreateDTO, CandidateResponseDTO> _addUserService;
 
-        public CandidateService(IOptions<UserDbConfiguration> userConfiguration, IMapper mapper, PasswordHasher hasher,
-            IInterviewerService interviewerService)
+        public CandidateService(IOptions<UserDbConfiguration> userConfiguration,
+            IMapper mapper,
+            IInterviewerService interviewerService,
+            AddUserService<Candidate, UserCreateDTO, CandidateResponseDTO> addUserService)
         {
             _mapper = mapper;
-            _passwordHasher = hasher;
             _interviewerService = interviewerService;
             var mongoClient = new MongoClient(userConfiguration.Value.ConnectionString);
             var userDatabase = mongoClient.GetDatabase(userConfiguration.Value.DatabaseName);
             _userCollection = userDatabase.GetCollection<User>(userConfiguration.Value.UserCollectionName);
 
 
-            _addUserService = new AddUserService<Candidate, UserCreateDTO, CandidateResponseDTO>(
-                _userCollection,
-                _mapper,
-                _passwordHasher);
+            _addUserService = addUserService;
         }
 
 
-        public Candidate PreCreateUserAsync(UserCreateDTO dto)
+        public async Task<Candidate> PreCreateUserAsync(UserCreateDTO dto)
         {
 
-            return _addUserService.PreCreateUserAsync(dto);
+            return await _addUserService.PreCreateUserAsync(dto);
 
         }
         public async Task<CandidateResponseDTO> CreateUserAsync(UserCreateDTO dto)
         {
             //add to db context
-            var user = PreCreateUserAsync(dto);
+            var user = await PreCreateUserAsync(dto);
 
             var entity = await _addUserService.CreateUserAsync(user, UserType.Candidate);
 
@@ -61,7 +59,7 @@ namespace Interview_Calendar.Services
             return _addUserService.PostCreateUserAsync(entity);
         }
 
-        public async Task<bool> AssignInterviewer(string id, AddInterviewerDTO interviwer)
+        public async Task<bool> AssignInterviewer(string id, AddInterviewerDTO interviewer)
         {
             //find candidate
             var filter = Builders<User>.Filter.And(
@@ -72,11 +70,16 @@ namespace Interview_Calendar.Services
 
             var candidate = FindOrFail(id);
 
-            _interviewerService.FindOrFail(interviwer.interviewerId);
+            if(candidate.InterviewerId != null)
+            {
+                throw new ValidationErrorException("there is already one interviwer assigned to candidate");
+            }
+
+            _interviewerService.FindOrFail(interviewer.interviewerId);
    
 
             //Add
-            candidate.InterviewerId = interviwer.interviewerId;
+            candidate.InterviewerId = interviewer.interviewerId;
 
             var updateResult = await _userCollection.ReplaceOneAsync(
                 filter,
@@ -122,15 +125,20 @@ namespace Interview_Calendar.Services
             //check if interviewer exists
             var candidate = FindOrFail(candidateId);
 
-            //check if candidate has an interviewer associated
-            if(candidate.InterviewerId == null)
+            if (candidate.Interview != null)
             {
-                throw new ValidationErrorException("Not interviewer assigned yet");
+                throw new ValidationErrorException("Interview already schedulled");
             }
 
-            
+            //check if candidate has an interviewer associated
+            if (candidate.InterviewerId == null)
+            {
+                throw new ValidationErrorException("No interviewer assigned yet");
+            }
 
-            //Add to interviwer and remove availability
+                        
+
+            //Add to interviewer and remove availability
             await _interviewerService.ScheduleInterview(candidate.InterviewerId, candidateId, date);
 
             

@@ -22,17 +22,23 @@ namespace Interview_Calendar.Services
         private readonly IMapper _mapper;
         private readonly PasswordHasher _passwordHasher;
 
-        public AddUserService(IMongoCollection<User> userCollection, IMapper mapper, PasswordHasher passwordHasher)
+        public AddUserService(IOptions<UserDbConfiguration> userConfiguration,
+            IMapper mapper,
+            PasswordHasher passwordHasher)
         {
-            _userCollection = userCollection;
+            
             _mapper = mapper;
             _passwordHasher = passwordHasher;
+
+            var mongoClient = new MongoClient(userConfiguration.Value.ConnectionString);
+            var userDatabase = mongoClient.GetDatabase(userConfiguration.Value.DatabaseName);
+            _userCollection = userDatabase.GetCollection<User>(userConfiguration.Value.UserCollectionName);
         }
 
-        public T PreCreateUserAsync(DI dto)
+        public async Task<T> PreCreateUserAsync(DI dto)
         {
             //Validate if there is any user with this email
-            var userExists = _userCollection.Find(x => x.Email == dto.Email).Any();
+            var userExists = await _userCollection.Find(x => x.Email == dto.Email).AnyAsync();
 
             if (userExists)
             {
